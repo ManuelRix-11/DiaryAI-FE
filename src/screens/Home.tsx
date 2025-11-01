@@ -1,228 +1,168 @@
-import React, { useState } from "react";
+import React from 'react';
 import {
-    SafeAreaView,
-    View,
-    Text,
-    ScrollView,
-    TouchableOpacity,
-    Pressable,
     StyleSheet,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Navbar from "@/src/components/_navbar";
+    Text,
+    View,
+    ScrollView,
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Navbar from '../components/_navbar';
+import StatsCard from "@/src/components/StatsCard";
+import FeaturesCard from "@/src/components/_featuresCard";
+import HomeActionCard from "@/src/components/HomeActionCard";
 
 export default function HomeScreen() {
     const insets = useSafeAreaInsets();
-    const [activeTab, setActiveTab] = useState("Journals");
-    const [activeFilter, setActiveFilter] = useState("All");
 
-    const routines = [
-        { title: "Gratitude Journal", description: "Cultivate gratitude with daily practice", frequency: "Daily", icon: "✨" },
-        { title: "Lucid Dream Log", description: "Unlock dream insights and meaning", frequency: "Weekly", icon: "🌙" },
-        { title: "Relationship Check", description: "Strengthen bonds with your loved ones", frequency: "Monthly", icon: "👫" },
-        { title: "Embrace and Commit", description: "Embrace change and commit fully", frequency: "Yearly", icon: "❤️" },
-        { title: "Positive Psychology", description: "Develop positive mindset & foster optimism", frequency: "Daily", icon: "🌸" },
+    const stats = [
+        { value: '24', label: 'Projects' },
+        { value: '12', label: 'Clients' },
+        { value: '98%', label: 'Success' },
     ];
 
-    const filters = ["All", "Daily", "Weekly", "Monthly", "Yearly"];
+    const actions = [
+        {
+            icon: '+',
+            label: 'New Project',
+            gradientColors: ['#5B3CE6', '#F56C5B'],
+        },
+        {
+            icon: '📊',
+            label: 'Analytics',
+            gradientColors: ['#F56C5B', '#E63C5B'],
+        },
+        {
+            icon: '⚙️',
+            label: 'Settings',
+            gradientColors: ['#5B3CE6', '#E63C5B'],
+        },
+        {
+            icon: '👤',
+            label: 'Profile',
+            gradientColors: ['#E63C5B', '#5B3CE6'],
+        },
+    ];
 
-    const visibleRoutines = routines.filter((r) => activeFilter === "All" || r.frequency === activeFilter);
+    const activities = [
+        { title: 'Project Update #1', time: '1 hour ago' },
+        { title: 'Project Update #2', time: '2 hours ago' },
+        { title: 'Project Update #3', time: '3 hours ago' },
+    ];
 
     return (
-        <SafeAreaView style={[styles.container, { paddingTop: insets.top || 12 }]}>
-            {/* Header */}
-            <View style={styles.headerRow}>
-                <Text style={styles.headerTitle}>Explore</Text>
-                <TouchableOpacity onPress={() => alert("Create pressed")}>
+        <View style={styles.container}>
+            <ScrollView
+                style={styles.scrollView}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                    paddingTop: insets.top + 20,
+                    paddingBottom: 100,
+                }}
+            >
+                {/* Hero Section */}
+                <View style={styles.hero}>
                     <LinearGradient
-                        colors={["#00d4ff", "#8a2be2"]}
+                        colors={['#5B3CE6', '#F56C5B', '#E63C5B']}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 1 }}
-                        style={styles.createButton}
+                        style={styles.heroGradientText}
                     >
-                        <Text style={styles.createButtonText}>+ Create</Text>
+                        <Text style={styles.heroTitle}>Welcome Back</Text>
                     </LinearGradient>
-                </TouchableOpacity>
-            </View>
+                    <Text style={styles.heroSubtitle}>
+                        Track your progress and achievements
+                    </Text>
+                </View>
 
-            {/* Tabs */}
-            <View style={styles.tabBarContainer}>
-                <LinearGradient
-                    colors={activeTab === "Journals" ? ["#00d4ff", "#8a2be2"] : ["#1a1a1f", "#1a1a1f"]}
-                    style={styles.tabItem}
-                >
-                    <Pressable onPress={() => setActiveTab("Journals")}>
-                        <Text style={[styles.tabText, activeTab === "Journals" && styles.tabTextActive]}>Journals</Text>
-                    </Pressable>
-                </LinearGradient>
-                <LinearGradient
-                    colors={activeTab === "Prompts" ? ["#00d4ff", "#8a2be2"] : ["#1a1a1f", "#1a1a1f"]}
-                    style={styles.tabItem}
-                >
-                    <Pressable onPress={() => setActiveTab("Prompts")}>
-                        <Text style={[styles.tabText, activeTab === "Prompts" && styles.tabTextActive]}>Prompts</Text>
-                    </Pressable>
-                </LinearGradient>
-            </View>
+                {/* Stats Cards */}
+                <View style={styles.statsContainer}>
+                    {stats.map((stat, index) => (
+                        <StatsCard
+                            key={index}
+                            value={stat.value}
+                            label={stat.label}
+                        />
+                    ))}
+                </View>
 
-            {/* Filter Chips */}
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.filterScroll}
-            >
-                {filters.map((f) => (
-                    <TouchableOpacity
-                        key={f}
-                        onPress={() => setActiveFilter(f)}
-                        style={[styles.filterChip, activeFilter === f && styles.filterChipActive]}
-                    >
-                        <Text style={[styles.filterText, activeFilter === f && styles.filterTextActive]}>{f}</Text>
-                    </TouchableOpacity>
-                ))}
-            </ScrollView>
-
-            {/* Content */}
-            <ScrollView contentContainerStyle={[styles.content, { paddingBottom: 140 + (insets.bottom || 0) }]}>
-                <Text style={styles.sectionTitle}>Routine</Text>
-
-                {visibleRoutines.map((routine, idx) => (
-                    <Pressable
-                        key={`${routine.title}-${idx}`}
-                        style={styles.card}
-                        onPress={() => alert(`${routine.title} pressed`)}
-                    >
-                        <Text style={styles.cardIcon}>{routine.icon}</Text>
-                        <View style={styles.cardBody}>
-                            <Text style={styles.cardTitle}>{routine.title}</Text>
-                            <Text style={styles.cardDesc}>{routine.description}</Text>
-                        </View>
-                        <Text style={styles.cardFreq}>{routine.frequency}</Text>
-                    </Pressable>
-                ))}
-
-                {visibleRoutines.length === 0 && (
-                    <View style={styles.emptyBox}>
-                        <Text style={styles.emptyText}>No routines for the selected filter.</Text>
+                {/* Quick Actions */}
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Quick Actions</Text>
+                    <View style={styles.actionsGrid}>
+                        {actions.map((action, index) => (
+                            <HomeActionCard
+                                key={index}
+                                icon={action.icon}
+                                label={action.label}
+                                gradientColors={action.gradientColors}
+                                onPress={() => alert(`${action.label} pressed`)}
+                            />
+                        ))}
                     </View>
-                )}
+                </View>
+
+                {/* Featured Card */}
+                <View style={styles.section}>
+                    <FeaturesCard
+                        title="Unlock Premium Features"
+                        description="Get access to advanced analytics and unlimited projects"
+                        buttonText="Learn More →"
+                        onPress={() => alert('Featured card pressed')}
+                    />
+                </View>
             </ScrollView>
-            <Navbar/>
-        </SafeAreaView>
+            <Navbar />
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#0b0b0f",
+        backgroundColor: '#0f172a',
     },
-    headerRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingHorizontal: 20,
-        paddingVertical: 12,
-    },
-    headerTitle: {
-        color: "#fff",
-        fontSize: 22,
-        fontWeight: "600",
-    },
-    createButton: {
-        paddingHorizontal: 14,
-        paddingVertical: 8,
-        borderRadius: 20,
-    },
-    createButtonText: {
-        color: "#fff",
-        fontWeight: "600",
-    },
-    tabBarContainer: {
-        flexDirection: "row",
-        marginHorizontal: 20,
-        marginTop: 16,
-        borderRadius: 25,
-        overflow: "hidden",
-    },
-    tabItem: {
+    scrollView: {
         flex: 1,
-        paddingVertical: 10,
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: 20,
     },
-    tabText: {
-        color: "#888",
-        fontWeight: "600",
-    },
-    tabTextActive: {
-        color: "#fff",
-    },
-    filterScroll: {
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-    },
-    filterChip: {
-        marginRight: 12,
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 20,
-        backgroundColor: "#1a1a1f",
-    },
-    filterChipActive: {
-        backgroundColor: "#2a2a30",
-    },
-    filterText: {
-        color: "#fff",
-    },
-    filterTextActive: {
-        color: "#fff",
-        fontWeight: "700",
-    },
-    content: {
+    hero: {
         paddingHorizontal: 20,
+        paddingVertical: 30,
+    },
+    heroGradientText: {
+        alignSelf: 'flex-start',
+        borderRadius: 8,
+        paddingHorizontal: 4,
+    },
+    heroTitle: {
+        fontSize: 36,
+        fontWeight: '800',
+        color: 'transparent',
+    },
+    heroSubtitle: {
+        fontSize: 16,
+        color: '#94a3b8',
+        marginTop: 8,
+    },
+    statsContainer: {
+        flexDirection: 'row',
+        paddingHorizontal: 20,
+        gap: 12,
+        marginBottom: 20,
+    },
+    section: {
+        paddingHorizontal: 20,
+        paddingVertical: 20,
     },
     sectionTitle: {
-        color: "#aaa",
-        marginBottom: 8,
-        marginTop: 6,
+        fontSize: 24,
+        fontWeight: '700',
+        color: '#e2e8f0',
+        marginBottom: 20,
     },
-    card: {
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#1a1a1f",
-        borderRadius: 12,
-        padding: 14,
-        marginBottom: 12,
-    },
-    cardIcon: {
-        fontSize: 26,
-        marginRight: 12,
-    },
-    cardBody: {
-        flex: 1,
-    },
-    cardTitle: {
-        color: "#fff",
-        fontSize: 16,
-        fontWeight: "600",
-    },
-    cardDesc: {
-        color: "#aaa",
-        fontSize: 13,
-        marginTop: 2,
-    },
-    cardFreq: {
-        color: "#8a2be2",
-        fontWeight: "600",
-    },
-    emptyBox: {
-        padding: 20,
-        alignItems: "center",
-    },
-    emptyText: {
-        color: "#666",
+    actionsGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 12,
     },
 });
