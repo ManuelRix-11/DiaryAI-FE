@@ -1,14 +1,23 @@
 import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import HomeScreen from "../screens/Home";
+import HomeScreen from "@/src/screens/Home";
+import SettingsScreen from "@/src/screens/Settings";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
 export default function AppNavigation() {
     return (
-        <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }}/>
-        </Stack.Navigator>
+        <Tab.Navigator 
+            screenOptions={{ 
+                headerShown: false,
+                lazy: true,
+                tabBarStyle: { display: 'none' }
+
+            }}
+        >
+            <Tab.Screen name="Home" component={HomeScreen} />
+            <Tab.Screen name="Settings" component={SettingsScreen} />
+        </Tab.Navigator>
     );
 }
