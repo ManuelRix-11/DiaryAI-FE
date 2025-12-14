@@ -1,11 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-
-interface StatsCardProps {
-    value: string;
-    label: string;
-}
+import {StatsCardProps} from "@/src/types/CardProps";
 
 export default function StatsCard({ value, label } : StatsCardProps) {
     return (

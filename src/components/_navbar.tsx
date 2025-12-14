@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, ReactElement } from "react";
+import React, { useRef, useEffect } from "react";
 import {
     View,
     Text,
@@ -13,12 +13,7 @@ import { Ionicons, AntDesign } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from '@react-navigation/native';
-
-interface NavItemProps {
-    label: string;
-    icon: ReactElement;
-    onPress: () => void;
-}
+import {NavItemProps} from "@/src/types/NavProps";
 
 export default function Navbar() {
     const insets = useSafeAreaInsets();
@@ -76,7 +71,8 @@ export default function Navbar() {
             }),
         ]).start();
 
-        alert("Center button tapped");
+        // @ts-ignore
+        navigation.navigate('Diary');
     };
 
     const NavItem: React.FC<NavItemProps> = ({ label, icon, onPress }) => {
@@ -159,7 +155,7 @@ export default function Navbar() {
                                 ]}
                             >
                                 <Image
-                                    source={require("../../assets/img/logoNoText.png")}
+                                    source={require("@/assets/img/logoNoText.png")}
                                     style={styles.centerButtonImage}
                                 />
                             </Animated.View>

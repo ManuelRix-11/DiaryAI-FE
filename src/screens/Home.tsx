@@ -11,9 +11,11 @@ import Navbar from '../components/_navbar';
 import StatsCard from "@/src/components/StatsCard";
 import FeaturesCard from "@/src/components/_featuresCard";
 import HomeActionCard from "@/src/components/HomeActionCard";
+import {useNavigation} from "@react-navigation/native";
 
 export default function HomeScreen() {
     const insets = useSafeAreaInsets();
+    const navigation = useNavigation();
 
     const stats = [
         { value: '24', label: 'Projects' },
@@ -26,6 +28,8 @@ export default function HomeScreen() {
             icon: '+',
             label: 'New Project',
             gradientColors: ['#5B3CE6', '#F56C5B'],
+            // @ts-ignore
+            event: ()=>navigation.navigate('Diary')
         },
         {
             icon: '📊',
@@ -50,6 +54,7 @@ export default function HomeScreen() {
         { title: 'Project Update #3', time: '3 hours ago' },
     ];
 
+    // @ts-ignore
     return (
         <View style={styles.container}>
             <ScrollView
@@ -96,7 +101,8 @@ export default function HomeScreen() {
                                 icon={action.icon}
                                 label={action.label}
                                 gradientColors={action.gradientColors}
-                                onPress={() => alert(`${action.label} pressed`)}
+                                // @ts-ignore
+                                onPress={action.event}
                             />
                         ))}
                     </View>

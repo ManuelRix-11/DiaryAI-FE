@@ -1,13 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-
-interface FeaturesCardProps {
-    title: string;
-    description: string;
-    buttonText: string;
-    onPress: () => void;
-}
+import {FeaturesCardProps} from "@/src/types/CardProps";
 
 export default function FeaturesCard({ title, description, buttonText, onPress }: FeaturesCardProps) {
     return (

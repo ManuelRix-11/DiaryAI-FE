@@ -1,13 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-
-interface HomeActionCardProps {
-    icon: string;
-    label: string;
-    gradientColors: string[];
-    onPress: () => void;
-}
+import {HomeActionCardProps} from "@/src/types/HomeProps";
 
 export default function HomeActionCard({ icon, label, gradientColors, onPress }: HomeActionCardProps) {
     return (

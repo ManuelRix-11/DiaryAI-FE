@@ -1,13 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-
-interface ProfileHeaderProps {
-    name: string;
-    email: string;
-    avatar: string | null;
-    onEditPress: () => void;
-}
+import {ProfileHeaderProps} from "@/src/types/ProfileProps";
 
 export default function ProfileHeader({ name, email, avatar, onEditPress }: ProfileHeaderProps) {
     return (

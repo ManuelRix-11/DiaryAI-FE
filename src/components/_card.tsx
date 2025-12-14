@@ -7,11 +7,7 @@ import {
     Animated,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-
-interface CardProps {
-    title: string;
-    description: string;
-}
+import {CardProps} from "@/src/types/CardProps";
 
 export default function Card({ title, description}: CardProps) {
     const fadeAnim = useRef(new Animated.Value(0)).current;

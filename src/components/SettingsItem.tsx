@@ -1,16 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Switch } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import {SettingItemProps} from "@/src/types/SettingsProps";
 
-interface SettingItemProps {
-    icon: string;
-    title: string;
-    description?: string;
-    type?: 'navigation' | 'toggle' | 'value';
-    value?: string | boolean;
-    onPress?: () => void;
-    onToggle?: (value: boolean) => void;
-}
 
 export default function SettingItem({
                                         icon,
