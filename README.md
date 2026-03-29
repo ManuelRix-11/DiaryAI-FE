@@ -29,6 +29,8 @@ Scrivere ogni giorno non è facile, per questo DiaryAI trasforma l'introspezione
 ### 🎨 Design Premium 
 DiaryAI è costruita attorno a un design scuro, moderno ed elegante. Dimentica l'ansia da foglio bianco: l'interfaccia ricorre ad un sapiente uso di animazioni delicate (come i bagliori al raggiungimento delle milestone) per rendere l'esperienza di scrittura profondamente rilassante e appagante.
 
+### 🧠 Aiuto da parte di un professionista
+_*TBD*_
 ---
 
 ## 🚀 Perché scegliere DiaryAI?
