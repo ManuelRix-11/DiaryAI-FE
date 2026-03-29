@@ -13,7 +13,7 @@ import { Ionicons, AntDesign } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from '@react-navigation/native';
-import {NavItemProps} from "@/src/types/NavProps";
+import { NavItemProps } from "@/src/types/NavProps";
 
 export default function Navbar() {
     const insets = useSafeAreaInsets();
@@ -22,7 +22,7 @@ export default function Navbar() {
 
     const scaleAnim = useRef(new Animated.Value(1)).current;
     const pulseAnim = useRef(new Animated.Value(1)).current;
-    const glowAnim = useRef(new Animated.Value(0.4)).current;
+    const glowAnim = useRef(new Animated.Value(0.35)).current;
 
     useEffect(() => {
         const createLoopAnimation = (
@@ -38,15 +38,15 @@ export default function Navbar() {
                         useNativeDriver: animValue !== glowAnim,
                     }),
                     Animated.timing(animValue, {
-                        toValue: animValue === pulseAnim ? 1 : 0.4,
+                        toValue: animValue === pulseAnim ? 1 : 0.35,
                         duration,
                         useNativeDriver: animValue !== glowAnim,
                     }),
                 ])
             );
 
-        const pulseAnimation = createLoopAnimation(pulseAnim, 1.05, 1500);
-        const glowAnimation = createLoopAnimation(glowAnim, 2, 1500);
+        const pulseAnimation = createLoopAnimation(pulseAnim, 1.03, 1700);
+        const glowAnimation = createLoopAnimation(glowAnim, 1.8, 1700);
 
         pulseAnimation.start();
         glowAnimation.start();
@@ -60,29 +60,31 @@ export default function Navbar() {
     const handleCenterButtonPress = () => {
         Animated.sequence([
             Animated.spring(scaleAnim, {
-                toValue: 1.5,
-                friction: 3,
+                toValue: 1.15,
+                friction: 4,
                 useNativeDriver: true,
             }),
             Animated.spring(scaleAnim, {
                 toValue: 1,
-                friction: 2,
+                friction: 3,
                 useNativeDriver: true,
             }),
         ]).start();
 
         // @ts-ignore
-        navigation.navigate('Diary');
+        navigation.navigate('NewDiaryModal');
     };
 
     const NavItem: React.FC<NavItemProps> = ({ label, icon, onPress }) => {
         const isActive: boolean = route.name === label;
-        const color: string = isActive ? "#60a5fa" : "#94a3b8";
+        const color: string = isActive ? "#c4b5fd" : "#94a3b8";
 
         return (
             <Pressable onPress={onPress} style={styles.navItem}>
-                {// @ts-ignore
-                     React.cloneElement(icon, { color })}
+                {
+                    // @ts-ignore
+                    React.cloneElement(icon, { color })
+                }
                 <Text style={[styles.navText, { color }]}>{label}</Text>
             </Pressable>
         );
@@ -93,7 +95,7 @@ export default function Navbar() {
     return (
         <>
             <BlurView
-                intensity={100}
+                intensity={80}
                 tint="dark"
                 style={[
                     styles.bottomNav,
@@ -114,13 +116,14 @@ export default function Navbar() {
                     <NavItem
                         label="Insights"
                         icon={<AntDesign name="line-chart" size={22} />}
-                        onPress={() => alert("Attenzione! Funzione non disponibile in questa versione")}
+                        onPress={() => navigation.navigate('Insights' as never)}
                     />
-                    <View style={{ width: 80 }} />
+                    <View style={{ width: 82 }} />
                     <NavItem
                         label="History"
                         icon={<Ionicons name="time-outline" size={22} />}
-                        onPress={() => {}}
+                        // @ts-ignore
+                        onPress={() => navigation.navigate('History')}
                     />
                     <NavItem
                         label="Settings"
@@ -171,14 +174,14 @@ const styles = StyleSheet.create({
     bottomNav: {
         position: "absolute",
         width: "100%",
-        borderTopRightRadius: 18,
-        borderTopLeftRadius: 18,
+        borderTopRightRadius: 22,
+        borderTopLeftRadius: 22,
         overflow: "hidden",
         borderTopWidth: 1,
         borderLeftWidth: 1,
         borderRightWidth: 1,
-        borderColor: "#334155",
-        backgroundColor: "rgba(15, 23, 42, 0.8)",
+        borderColor: "#243149",
+        backgroundColor: "rgba(15, 23, 42, 0.82)",
         paddingTop: 8,
         paddingHorizontal: 8,
     },
@@ -196,6 +199,7 @@ const styles = StyleSheet.create({
     navText: {
         fontSize: 11,
         marginTop: 4,
+        fontWeight: "600",
     },
     centerButtonWrapper: {
         position: "absolute",
@@ -205,13 +209,13 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     centerButtonGradient: {
-        width: 70,
-        height: 70,
-        borderRadius: 35,
+        width: 72,
+        height: 72,
+        borderRadius: 36,
         alignItems: "center",
         justifyContent: "center",
         shadowColor: "#3b82f6",
-        shadowOpacity: 0.4,
+        shadowOpacity: 0.28,
         shadowOffset: { width: 0, height: 8 },
         shadowRadius: 12,
         elevation: 10,
@@ -223,6 +227,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#0f172a",
         alignItems: "center",
         justifyContent: "center",
+        borderWidth: 1,
+        borderColor: "#243149",
     },
     centerButtonImage: {
         width: 40,

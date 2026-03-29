@@ -1,13 +1,13 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import {ProfileHeaderProps} from "@/src/types/ProfileProps";
+import { ProfileHeaderProps } from '@/src/types/ProfileProps';
 
 export default function ProfileHeader({ name, email, avatar, onEditPress }: ProfileHeaderProps) {
     return (
         <View style={styles.profileHeader}>
             <LinearGradient
-                colors={['rgba(91, 60, 230, 0.1)', 'rgba(230, 60, 91, 0.1)']}
+                colors={['rgba(91, 60, 230, 0.14)', 'rgba(245, 108, 91, 0.10)']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.profileCard}
@@ -28,13 +28,17 @@ export default function ProfileHeader({ name, email, avatar, onEditPress }: Prof
                         )}
                     </LinearGradient>
                 </View>
+
                 <View style={styles.profileInfo}>
                     <Text style={styles.profileName}>{name}</Text>
                     <Text style={styles.profileEmail}>{email}</Text>
                 </View>
-                <TouchableOpacity onPress={onEditPress} style={styles.editButton}>
-                    <Text style={styles.editButtonText}>Edit</Text>
-                </TouchableOpacity>
+
+                {onEditPress && (
+                    <TouchableOpacity onPress={onEditPress} style={styles.editButton} activeOpacity={0.9}>
+                        <Text style={styles.editButtonText}>Edit</Text>
+                    </TouchableOpacity>
+                )}
             </LinearGradient>
         </View>
     );
@@ -43,37 +47,37 @@ export default function ProfileHeader({ name, email, avatar, onEditPress }: Prof
 const styles = StyleSheet.create({
     profileHeader: {
         paddingHorizontal: 20,
-        marginBottom: 24,
+        marginBottom: 22,
     },
     profileCard: {
-        backgroundColor: '#1e293b',
+        backgroundColor: '#111c33',
         borderWidth: 1,
-        borderColor: '#334155',
-        borderRadius: 20,
-        padding: 20,
+        borderColor: '#243149',
+        borderRadius: 22,
+        padding: 18,
         flexDirection: 'row',
         alignItems: 'center',
     },
     avatarContainer: {
-        marginRight: 16,
+        marginRight: 14,
     },
     avatarGradient: {
-        width: 70,
-        height: 70,
-        borderRadius: 35,
+        width: 72,
+        height: 72,
+        borderRadius: 36,
         alignItems: 'center',
         justifyContent: 'center',
         padding: 3,
     },
     avatar: {
-        width: 64,
-        height: 64,
-        borderRadius: 32,
+        width: 66,
+        height: 66,
+        borderRadius: 33,
         backgroundColor: '#0f172a',
     },
     avatarText: {
-        fontSize: 32,
-        fontWeight: '700',
+        fontSize: 30,
+        fontWeight: '800',
         color: '#ffffff',
     },
     profileInfo: {
@@ -81,7 +85,7 @@ const styles = StyleSheet.create({
     },
     profileName: {
         fontSize: 20,
-        fontWeight: '700',
+        fontWeight: '800',
         color: '#e2e8f0',
         marginBottom: 4,
     },
@@ -92,14 +96,14 @@ const styles = StyleSheet.create({
     editButton: {
         paddingVertical: 8,
         paddingHorizontal: 16,
-        backgroundColor: 'rgba(91, 60, 230, 0.2)',
-        borderRadius: 12,
+        backgroundColor: 'rgba(91, 60, 230, 0.16)',
+        borderRadius: 14,
         borderWidth: 1,
-        borderColor: '#5B3CE6',
+        borderColor: 'rgba(91, 60, 230, 0.45)',
     },
     editButtonText: {
         fontSize: 14,
-        fontWeight: '600',
-        color: '#5B3CE6',
+        fontWeight: '700',
+        color: '#c4b5fd',
     },
 });

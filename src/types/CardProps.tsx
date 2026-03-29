@@ -13,4 +13,7 @@ export interface FeaturesCardProps {
 export interface StatsCardProps {
     value: string;
     label: string;
+    highlight?: boolean;
+    icon?: string;
+    glowIntensity?: number;
 }

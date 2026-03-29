@@ -9,57 +9,51 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+
 import Navbar from '../components/_navbar';
 import ProfileHeader from '../components/ProfileHeader';
 import SettingItem from '../components/SettingsItem';
+import { AuthUser } from '@/model/user';
 
-export default function SettingsScreen() {
+type SettingsScreenProps = {
+    onLogout?: () => void;
+    user: AuthUser;
+};
+
+export default function SettingsScreen({ onLogout, user }: SettingsScreenProps) {
     const insets = useSafeAreaInsets();
+    const navigation = useNavigation();
 
-    // Stati per le impostazioni
     const [notifications, setNotifications] = useState(true);
     const [darkMode, setDarkMode] = useState(true);
     const [analytics, setAnalytics] = useState(false);
     const [biometric, setBiometric] = useState(true);
 
-    const userData = {
-        name: 'Andrea Salzillo',
-        email: 'a.salzillo@diaryai.com',
-        avatar: null, // oppure URL dell'immagine
-    };
-
     const handleEditProfile = () => {
-        Alert.alert('Attenzione!', 'Opzione non disponibile in questa versione');
+        navigation.navigate('Profile' as never);
     };
 
     const handleAccountSetting = () => {
-        Alert.alert('Attenzione!', 'Opzione non disponibile in questa versione');
+        Alert.alert('Attenzione', 'Opzione non disponibile in questa versione');
     };
 
     const handleAppSetting = () => {
-        Alert.alert('Attenzione!', 'Opzione non disponibile in questa versione');
+        Alert.alert('Attenzione', 'Opzione non disponibile in questa versione');
     };
 
     const handleLogout = () => {
-        Alert.alert(
-            'Logout',
-            'Are you sure you want to logout?',
-            [
-                { text: 'Cancel', style: 'cancel' },
-                { text: 'Logout', style: 'destructive', onPress: () => console.log('Logout') }
-            ]
-        );
+        Alert.alert('Logout', 'Vuoi uscire dall’account?', [
+            { text: 'Annulla', style: 'cancel' },
+            { text: 'Logout', style: 'destructive', onPress: () => onLogout?.() },
+        ]);
     };
 
     const handleDeleteAccount = () => {
-        Alert.alert(
-            'Delete Account',
-            'This action cannot be undone. Are you sure?',
-            [
-                { text: 'Cancel', style: 'cancel' },
-                { text: 'Delete', style: 'destructive', onPress: () => console.log('Delete') }
-            ]
-        );
+        Alert.alert('Delete Account', 'This action cannot be undone. Are you sure?', [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Delete', style: 'destructive', onPress: () => console.log('Delete') },
+        ]);
     };
 
     return (
@@ -68,53 +62,39 @@ export default function SettingsScreen() {
                 style={styles.scrollView}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{
-                    paddingTop: insets.top + 20,
-                    paddingBottom: 100,
+                    paddingTop: insets.top + 16,
+                    paddingBottom: 120,
                 }}
             >
-                {/* Header */}
                 <View style={styles.header}>
+                    <View style={styles.badge}>
+                        <Text style={styles.badgeText}>Account</Text>
+                    </View>
                     <Text style={styles.headerTitle}>Settings</Text>
-                    <Text style={styles.headerSubtitle}>Manage your account and preferences</Text>
+                    <Text style={styles.headerSubtitle}>
+                        Gestisci il tuo account, le preferenze e le opzioni dell’app.
+                    </Text>
                 </View>
 
-                {/* Profile Header */}
                 <ProfileHeader
-                    name={userData.name}
-                    email={userData.email}
-                    avatar={userData.avatar}
+                    name={user.username}
+                    email={user.email}
+                    avatar={null}
                     onEditPress={handleEditProfile}
                 />
 
-                {/* Account Settings */}
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Account</Text>
                     <SettingItem
-                        icon="👤"
-                        title="Personal Information"
-                        description="Name, email, phone number"
-                        type="navigation"
-                        onPress={() => handleAccountSetting()}
-                    />
-                    <SettingItem
-                        icon="🔒"
-                        title="Privacy & Security"
-                        description="Password, 2FA, privacy settings"
-                        type="navigation"
-                        onPress={() => handleAccountSetting()}
-                    />
-                    <SettingItem
-                        icon="💳"
+                        icon="💎"
                         title="Subscription"
                         description="Manage your subscription"
                         type="navigation"
-                        onPress={() => handleAccountSetting()}
+                        onPress={handleAccountSetting}
                     />
                 </View>
 
-                {/* App Settings */}
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>App Preferences</Text>
+                    <Text style={styles.sectionTitle}>App preferences</Text>
                     <SettingItem
                         icon="🔔"
                         title="Notifications"
@@ -132,7 +112,7 @@ export default function SettingsScreen() {
                         onToggle={setDarkMode}
                     />
                     <SettingItem
-                        icon="📊"
+                        icon="📈"
                         title="Analytics"
                         description="Help improve the app"
                         type="toggle"
@@ -140,79 +120,23 @@ export default function SettingsScreen() {
                         onToggle={setAnalytics}
                     />
                     <SettingItem
-                        icon="🔐"
+                        icon="🧬"
                         title="Biometric Login"
                         description="Face ID / Touch ID"
                         type="toggle"
                         value={biometric}
                         onToggle={setBiometric}
                     />
-                    <SettingItem
-                        icon="🌐"
-                        title="Language"
-                        description="App language"
-                        type="value"
-                        value="English"
-                        onPress={() => handleAppSetting()}
-                    />
                 </View>
 
-                {/* Support */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Support</Text>
-                    <SettingItem
-                        icon="❓"
-                        title="Help Center"
-                        description="FAQs and support articles"
-                        type="navigation"
-                        onPress={() => handleAppSetting()}
-                    />
-                    <SettingItem
-                        icon="💬"
-                        title="Contact Us"
-                        description="Get in touch with support"
-                        type="navigation"
-                        onPress={() => handleAppSetting()}
-                    />
-                    <SettingItem
-                        icon="⭐"
-                        title="Rate App"
-                        description="Share your feedback"
-                        type="navigation"
-                        onPress={() => handleAppSetting()}
-                    />
-                </View>
-
-                {/* About */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>About</Text>
-                    <SettingItem
-                        icon="ℹ️"
-                        title="App Version"
-                        type="value"
-                        value="0.0.2"
-                    />
-                    <SettingItem
-                        icon="📄"
-                        title="Terms of Service"
-                        type="navigation"
-                        onPress={() => handleAppSetting()}
-                    />
-                    <SettingItem
-                        icon="🔐"
-                        title="Privacy Policy"
-                        type="navigation"
-                        onPress={() => handleAppSetting()}
-                    />
-                </View>
-
-                {/* Danger Zone */}
                 <View style={styles.dangerZone}>
-                    <TouchableOpacity style={styles.logoutButton} onPress={handleLogout} disabled={true}>
+                    <Text style={styles.sectionTitle}>Danger zone</Text>
+
+                    <TouchableOpacity style={styles.logoutButton} onPress={handleLogout} activeOpacity={0.9}>
                         <Text style={styles.logoutText}>Logout</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteAccount} disabled={true}>
+                    <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteAccount} activeOpacity={0.9} disabled>
                         <LinearGradient
                             colors={['#E63C5B', '#F56C5B']}
                             start={{ x: 0, y: 0 }}
@@ -224,6 +148,7 @@ export default function SettingsScreen() {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
+
             <Navbar />
         </View>
     );
@@ -239,10 +164,27 @@ const styles = StyleSheet.create({
     },
     header: {
         paddingHorizontal: 20,
-        marginBottom: 24,
+        marginBottom: 20,
+    },
+    badge: {
+        alignSelf: 'flex-start',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 999,
+        backgroundColor: 'rgba(91, 60, 230, 0.12)',
+        borderWidth: 1,
+        borderColor: 'rgba(91, 60, 230, 0.35)',
+        marginBottom: 14,
+    },
+    badgeText: {
+        color: '#c4b5fd',
+        fontSize: 12,
+        fontWeight: '700',
+        letterSpacing: 0.6,
+        textTransform: 'uppercase',
     },
     headerTitle: {
-        fontSize: 36,
+        fontSize: 38,
         fontWeight: '800',
         color: '#e2e8f0',
         marginBottom: 8,
@@ -250,40 +192,42 @@ const styles = StyleSheet.create({
     headerSubtitle: {
         fontSize: 16,
         color: '#94a3b8',
+        lineHeight: 22,
+        maxWidth: 340,
     },
     section: {
         paddingHorizontal: 20,
-        marginBottom: 24,
+        marginBottom: 22,
     },
     sectionTitle: {
         fontSize: 14,
-        fontWeight: '700',
+        fontWeight: '800',
         color: '#94a3b8',
         textTransform: 'uppercase',
-        letterSpacing: 0.5,
+        letterSpacing: 0.8,
         marginBottom: 12,
     },
     dangerZone: {
         paddingHorizontal: 20,
-        marginTop: 12,
+        marginTop: 8,
         marginBottom: 24,
         gap: 12,
     },
     logoutButton: {
-        backgroundColor: '#1e293b',
+        backgroundColor: '#111c33',
         borderWidth: 1,
-        borderColor: '#334155',
-        borderRadius: 12,
+        borderColor: '#243149',
+        borderRadius: 16,
         padding: 16,
         alignItems: 'center',
     },
     logoutText: {
         fontSize: 16,
-        fontWeight: '600',
-        color: '#94a3b8',
+        fontWeight: '700',
+        color: '#e2e8f0',
     },
     deleteButton: {
-        borderRadius: 12,
+        borderRadius: 16,
         overflow: 'hidden',
     },
     deleteGradient: {
@@ -292,7 +236,7 @@ const styles = StyleSheet.create({
     },
     deleteText: {
         fontSize: 16,
-        fontWeight: '600',
+        fontWeight: '700',
         color: '#ffffff',
     },
 });

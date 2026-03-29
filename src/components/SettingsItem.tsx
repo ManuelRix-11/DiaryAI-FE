@@ -1,8 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Switch } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Switch, TextInput } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import {SettingItemProps} from "@/src/types/SettingsProps";
-
+import { SettingItemProps } from '@/src/types/SettingsProps';
 
 export default function SettingItem({
                                         icon,
@@ -11,14 +10,16 @@ export default function SettingItem({
                                         type = 'navigation',
                                         value,
                                         onPress,
-                                        onToggle
+                                        onToggle,
+                                        onChangeText,
+                                        secureTextEntry,
                                     }: SettingItemProps) {
     return (
         <TouchableOpacity
             style={styles.settingItem}
             onPress={onPress}
-            disabled={type === 'toggle'}
-            activeOpacity={0.7}
+            disabled={type === 'toggle' || type === 'input'}
+            activeOpacity={0.8}
         >
             <View style={styles.settingLeft}>
                 <LinearGradient
@@ -29,6 +30,7 @@ export default function SettingItem({
                 >
                     <Text style={styles.icon}>{icon}</Text>
                 </LinearGradient>
+
                 <View style={styles.settingText}>
                     <Text style={styles.settingTitle}>{title}</Text>
                     {description && (
@@ -36,10 +38,10 @@ export default function SettingItem({
                     )}
                 </View>
             </View>
+
             <View style={styles.settingRight}>
-                {type === 'navigation' && (
-                    <Text style={styles.arrow}>›</Text>
-                )}
+                {type === 'navigation' && <Text style={styles.arrow}>›</Text>}
+
                 {type === 'toggle' && typeof value === 'boolean' && (
                     <Switch
                         value={value}
@@ -48,8 +50,20 @@ export default function SettingItem({
                         thumbColor={value ? '#ffffff' : '#94a3b8'}
                     />
                 )}
+
                 {type === 'value' && (
-                    <Text style={styles.valueText}>{value}</Text>
+                    <Text style={styles.valueText}>{value as string}</Text>
+                )}
+
+                {type === 'input' && (
+                    <TextInput
+                        style={styles.inputField}
+                        value={value as string}
+                        onChangeText={onChangeText}
+                        secureTextEntry={secureTextEntry}
+                        placeholderTextColor="#94a3b8"
+                        placeholder="Aggiungi..."
+                    />
                 )}
             </View>
         </TouchableOpacity>
@@ -58,10 +72,10 @@ export default function SettingItem({
 
 const styles = StyleSheet.create({
     settingItem: {
-        backgroundColor: '#1e293b',
+        backgroundColor: '#111c33',
         borderWidth: 1,
-        borderColor: '#334155',
-        borderRadius: 12,
+        borderColor: '#243149',
+        borderRadius: 16,
         padding: 16,
         marginBottom: 12,
         flexDirection: 'row',
@@ -74,39 +88,53 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     iconContainer: {
-        width: 40,
-        height: 40,
-        borderRadius: 10,
+        width: 42,
+        height: 42,
+        borderRadius: 12,
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: 12,
     },
     icon: {
-        fontSize: 20,
+        fontSize: 18,
+        color: '#ffffff',
+        fontWeight: '700',
     },
     settingText: {
         flex: 1,
     },
     settingTitle: {
         fontSize: 16,
-        fontWeight: '600',
+        fontWeight: '700',
         color: '#e2e8f0',
         marginBottom: 2,
     },
     settingDescription: {
         fontSize: 13,
         color: '#94a3b8',
+        lineHeight: 18,
     },
     settingRight: {
         marginLeft: 12,
     },
     arrow: {
-        fontSize: 24,
+        fontSize: 26,
         color: '#94a3b8',
         fontWeight: '300',
+        marginTop: -2,
     },
     valueText: {
         fontSize: 14,
         color: '#94a3b8',
+        fontWeight: '600',
+    },
+    inputField: {
+        fontSize: 14,
+        color: '#e2e8f0',
+        fontWeight: '600',
+        minWidth: 100,
+        textAlign: 'right',
+        paddingVertical: 4,
+        paddingHorizontal: 0,
     },
 });

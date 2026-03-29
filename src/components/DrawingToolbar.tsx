@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-    StyleSheet,
-    View,
-    TouchableOpacity,
-    Text,
-} from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { DrawingToolbarProps, ToolConfig } from '@/src/types/WritingProps';
@@ -22,14 +17,14 @@ export default function DrawingToolbar({
                                            onClear,
                                        }: DrawingToolbarProps) {
     const colors: string[] = [
-        '#000000', // Black
-        '#E63C5B', // Red
-        '#5B3CE6', // Purple
-        '#3b82f6', // Blue
-        '#10b981', // Green
-        '#f59e0b', // Orange
-        '#ec4899', // Pink
-        '#ffffff', // White
+        '#000000',
+        '#E63C5B',
+        '#5B3CE6',
+        '#3b82f6',
+        '#10b981',
+        '#f59e0b',
+        '#ec4899',
+        '#ffffff',
     ];
 
     const strokeWidths: number[] = [2, 4, 6, 8, 12];
@@ -45,18 +40,20 @@ export default function DrawingToolbar({
     return (
         <View style={styles.toolbar}>
             <LinearGradient
-                colors={['#1e293b', '#0f172a']}
+                colors={['rgba(17, 28, 51, 0.98)', 'rgba(15, 23, 42, 0.98)']}
                 style={styles.toolbarGradient}
             >
-                {/* Header */}
                 <View style={styles.toolbarHeader}>
-                    <Text style={styles.toolbarTitle}>Drawing Tools</Text>
+                    <View>
+                        <Text style={styles.toolbarTitle}>Drawing Tools</Text>
+                        <Text style={styles.toolbarSubtitle}>Customize brush, color and size</Text>
+                    </View>
+
                     <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                        <Ionicons name="close" size={24} color="#94a3b8" />
+                        <Ionicons name="close" size={22} color="#94a3b8" />
                     </TouchableOpacity>
                 </View>
 
-                {/* Tools */}
                 <View style={styles.toolsSection}>
                     <Text style={styles.sectionLabel}>Tool</Text>
                     <View style={styles.toolsRow}>
@@ -68,11 +65,12 @@ export default function DrawingToolbar({
                                     selectedTool === tool.id && styles.toolButtonActive,
                                 ]}
                                 onPress={() => onToolChange(tool.id)}
+                                activeOpacity={0.9}
                             >
                                 <Ionicons
                                     name={tool.icon as any}
                                     size={24}
-                                    color={selectedTool === tool.id ? '#5B3CE6' : '#94a3b8'}
+                                    color={selectedTool === tool.id ? '#c4b5fd' : '#94a3b8'}
                                 />
                                 <Text
                                     style={[
@@ -87,7 +85,6 @@ export default function DrawingToolbar({
                     </View>
                 </View>
 
-                {/* Colors */}
                 {selectedTool !== 'eraser' && (
                     <View style={styles.colorsSection}>
                         <Text style={styles.sectionLabel}>Color</Text>
@@ -102,6 +99,7 @@ export default function DrawingToolbar({
                                         selectedColor === color && styles.colorButtonActive,
                                     ]}
                                     onPress={() => onColorChange(color)}
+                                    activeOpacity={0.9}
                                 >
                                     {selectedColor === color && (
                                         <Ionicons
@@ -116,7 +114,6 @@ export default function DrawingToolbar({
                     </View>
                 )}
 
-                {/* Stroke Width */}
                 <View style={styles.strokeSection}>
                     <Text style={styles.sectionLabel}>
                         {selectedTool === 'eraser' ? 'Eraser Size' : 'Stroke Width'}
@@ -130,6 +127,7 @@ export default function DrawingToolbar({
                                     selectedStrokeWidth === width && styles.strokeButtonActive,
                                 ]}
                                 onPress={() => onStrokeWidthChange(width)}
+                                activeOpacity={0.9}
                             >
                                 <View
                                     style={[
@@ -138,7 +136,7 @@ export default function DrawingToolbar({
                                             width: width * 2,
                                             height: width * 2,
                                             backgroundColor:
-                                                selectedStrokeWidth === width ? '#5B3CE6' : '#94a3b8',
+                                                selectedStrokeWidth === width ? '#c4b5fd' : '#94a3b8',
                                         },
                                     ]}
                                 />
@@ -147,17 +145,15 @@ export default function DrawingToolbar({
                     </View>
                 </View>
 
-                {/* Actions */}
                 <View style={styles.actionsSection}>
-                    <TouchableOpacity style={styles.actionButton} onPress={onUndo}>
+                    <TouchableOpacity style={styles.actionButton} onPress={onUndo} activeOpacity={0.9}>
                         <Ionicons name="arrow-undo" size={20} color="#94a3b8" />
                         <Text style={styles.actionText}>Undo</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.actionButton} onPress={onClear}>
+
+                    <TouchableOpacity style={styles.actionButton} onPress={onClear} activeOpacity={0.9}>
                         <Ionicons name="trash-outline" size={20} color="#E63C5B" />
-                        <Text style={[styles.actionText, { color: '#E63C5B' }]}>
-                            Clear All
-                        </Text>
+                        <Text style={[styles.actionText, { color: '#E63C5B' }]}>Clear</Text>
                     </TouchableOpacity>
                 </View>
             </LinearGradient>
@@ -169,39 +165,44 @@ const styles = StyleSheet.create({
     toolbar: {
         position: 'absolute',
         bottom: 100,
-        left: 20,
-        right: 20,
-        borderRadius: 20,
+        left: 16,
+        right: 16,
+        borderRadius: 22,
         overflow: 'hidden',
         borderWidth: 1,
-        borderColor: '#334155',
+        borderColor: '#243149',
     },
     toolbarGradient: {
-        padding: 20,
+        padding: 18,
     },
     toolbarHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 20,
+        alignItems: 'flex-start',
+        marginBottom: 18,
     },
     toolbarTitle: {
         fontSize: 18,
-        fontWeight: '700',
+        fontWeight: '800',
         color: '#e2e8f0',
+        marginBottom: 2,
+    },
+    toolbarSubtitle: {
+        fontSize: 12,
+        color: '#94a3b8',
     },
     closeButton: {
         padding: 4,
     },
     toolsSection: {
-        marginBottom: 20,
+        marginBottom: 18,
     },
     sectionLabel: {
         fontSize: 12,
-        fontWeight: '600',
+        fontWeight: '700',
         color: '#94a3b8',
         textTransform: 'uppercase',
-        letterSpacing: 0.5,
+        letterSpacing: 0.6,
         marginBottom: 12,
     },
     toolsRow: {
@@ -212,26 +213,26 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#0f172a',
         borderWidth: 1,
-        borderColor: '#334155',
-        borderRadius: 12,
-        padding: 12,
+        borderColor: '#243149',
+        borderRadius: 14,
+        paddingVertical: 12,
         alignItems: 'center',
         gap: 8,
     },
     toolButtonActive: {
-        backgroundColor: 'rgba(91, 60, 230, 0.1)',
+        backgroundColor: 'rgba(196, 181, 253, 0.08)',
         borderColor: '#5B3CE6',
     },
     toolLabel: {
         fontSize: 12,
         color: '#94a3b8',
-        fontWeight: '600',
+        fontWeight: '700',
     },
     toolLabelActive: {
-        color: '#5B3CE6',
+        color: '#c4b5fd',
     },
     colorsSection: {
-        marginBottom: 20,
+        marginBottom: 18,
     },
     colorsRow: {
         flexDirection: 'row',
@@ -254,7 +255,7 @@ const styles = StyleSheet.create({
         borderColor: '#5B3CE6',
     },
     strokeSection: {
-        marginBottom: 20,
+        marginBottom: 18,
     },
     strokeRow: {
         flexDirection: 'row',
@@ -264,18 +265,18 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#0f172a',
         borderWidth: 1,
-        borderColor: '#334155',
-        borderRadius: 12,
-        padding: 16,
+        borderColor: '#243149',
+        borderRadius: 14,
+        paddingVertical: 16,
         alignItems: 'center',
         justifyContent: 'center',
     },
     strokeButtonActive: {
-        backgroundColor: 'rgba(91, 60, 230, 0.1)',
+        backgroundColor: 'rgba(196, 181, 253, 0.08)',
         borderColor: '#5B3CE6',
     },
     strokePreview: {
-        borderRadius: 50,
+        borderRadius: 999,
     },
     actionsSection: {
         flexDirection: 'row',
@@ -285,9 +286,9 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#0f172a',
         borderWidth: 1,
-        borderColor: '#334155',
-        borderRadius: 12,
-        padding: 12,
+        borderColor: '#243149',
+        borderRadius: 14,
+        paddingVertical: 12,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -295,7 +296,7 @@ const styles = StyleSheet.create({
     },
     actionText: {
         fontSize: 14,
-        fontWeight: '600',
+        fontWeight: '700',
         color: '#94a3b8',
     },
 });
