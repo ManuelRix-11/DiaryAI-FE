@@ -26,15 +26,15 @@ export const usersApi = {
         apiClient.post<AuthUser>('/users/register', payload),
 
     list: () =>
-        apiClient.get<AuthUser[]>('/users/'),
+        apiClient.get<AuthUser[]>('/users/', undefined, 'users_list'),
 
     getById: (id: string) =>
-        apiClient.get<AuthUser>(`/users/${id}`),
+        apiClient.get<AuthUser>(`/users/${id}`, undefined, `users_${id}`),
 
     update: (id: string, payload: UpdateUserPayload) =>
         apiClient.put<AuthUser>(`/users/${id}`, payload),
     getStats: (id: string) =>
-        apiClient.get<number[]>(`/users/${id}/stats`),
+        apiClient.get<number[]>(`/users/${id}/stats`, undefined, `stats_${id}`),
 
     remove: (id: string) =>
         apiClient.delete<{ message: string }>(`/users/${id}`),

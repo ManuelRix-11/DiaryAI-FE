@@ -1,4 +1,6 @@
-const BASE_URL = 'http://192.168.1.73:8000';
+import { getCache, setCache } from '../utils/apiCache';
+
+const BASE_URL = 'http://10.167.78.209:8000';
 
 type ApiOptions = RequestInit & {
     headers?: Record<string, string>;
@@ -29,8 +31,24 @@ async function request<T>(endpoint: string, options: ApiOptions = {}): Promise<T
 }
 
 export const apiClient = {
-    get: <T>(endpoint: string, headers?: Record<string, string>) =>
-        request<T>(endpoint, { method: 'GET', headers }),
+    get: async <T>(endpoint: string, headers?: Record<string, string>, cacheKey?: string) => {
+        if (cacheKey) {
+            const cachedData = await getCache<T>(cacheKey);
+            if (cachedData) {
+                // Background fetch per tenere la cache aggiornata (Stale-While-Revalidate)
+                request<T>(endpoint, { method: 'GET', headers })
+                    .then(data => setCache(cacheKey, data))
+                    .catch(e => console.warn("Background fetch failed", e));
+                return cachedData;
+            }
+        }
+        
+        const data = await request<T>(endpoint, { method: 'GET', headers });
+        if (cacheKey) {
+            await setCache(cacheKey, data);
+        }
+        return data;
+    },
 
     post: <T>(endpoint: string, body?: unknown, headers?: Record<string, string>) =>
         request<T>(endpoint, {

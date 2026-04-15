@@ -14,11 +14,14 @@ import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NavItemProps } from "@/src/types/NavProps";
+import { useThemeStyles, ThemeColors, useTheme } from '../theme/ThemeContext';
 
 export default function Navbar() {
     const insets = useSafeAreaInsets();
     const navigation = useNavigation();
     const route = useRoute();
+    const { isDark } = useTheme();
+    const styles = useThemeStyles(createStyles);
 
     const scaleAnim = useRef(new Animated.Value(1)).current;
     const pulseAnim = useRef(new Animated.Value(1)).current;
@@ -77,7 +80,7 @@ export default function Navbar() {
 
     const NavItem: React.FC<NavItemProps> = ({ label, icon, onPress }) => {
         const isActive: boolean = route.name === label;
-        const color: string = isActive ? "#c4b5fd" : "#94a3b8";
+        const color: string = isActive ? styles.navTextActive.color as string || "#c4b5fd" : styles.navText.color as string || "#94a3b8";
 
         return (
             <Pressable onPress={onPress} style={styles.navItem}>
@@ -96,7 +99,7 @@ export default function Navbar() {
         <>
             <BlurView
                 intensity={80}
-                tint="dark"
+                tint={isDark ? "dark" : "light"}
                 style={[
                     styles.bottomNav,
                     {
@@ -170,7 +173,7 @@ export default function Navbar() {
     );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors, isDark: boolean) => StyleSheet.create({
     bottomNav: {
         position: "absolute",
         width: "100%",
@@ -180,8 +183,8 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderLeftWidth: 1,
         borderRightWidth: 1,
-        borderColor: "#243149",
-        backgroundColor: "rgba(15, 23, 42, 0.82)",
+        borderColor: isDark ? "#243149" : "rgba(0,0,0,0.1)",
+        backgroundColor: isDark ? "rgba(15, 23, 42, 0.82)" : "rgba(255, 255, 255, 0.82)",
         paddingTop: 8,
         paddingHorizontal: 8,
     },
@@ -200,6 +203,10 @@ const styles = StyleSheet.create({
         fontSize: 11,
         marginTop: 4,
         fontWeight: "600",
+        color: colors.textSecondary,
+    },
+    navTextActive: {
+        color: colors.primary,
     },
     centerButtonWrapper: {
         position: "absolute",
@@ -224,11 +231,11 @@ const styles = StyleSheet.create({
         width: 62,
         height: 62,
         borderRadius: 31,
-        backgroundColor: "#0f172a",
+        backgroundColor: colors.background,
         alignItems: "center",
         justifyContent: "center",
         borderWidth: 1,
-        borderColor: "#243149",
+        borderColor: isDark ? "#243149" : "rgba(0,0,0,0.1)",
     },
     centerButtonImage: {
         width: 40,

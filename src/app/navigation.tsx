@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { AppState } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthUser } from '@/model/user';
@@ -11,19 +12,39 @@ import ProfileScreen from '@/src/screens/Profile';
 import NewDiaryModal from '@/src/components/NewDiaryModal';
 import HistoryScreen from '@/src/screens/HistoryScreen';
 import InsightsScreen from '@/src/screens/InsightsScreen';
+import LockScreen from '../screens/LockScreen';
+import { ThemeProvider } from '../theme/ThemeContext';
 
 const Stack = createNativeStackNavigator();
 
 const AUTH_KEY = '@diaryai:user';
+const BIOMETRIC_KEY = '@diaryai:biometric_enabled';
 
-export default function AppNavigation() {
+function AppNavigationInner() {
     const [user, setUser] = useState<AuthUser | null | undefined>(undefined);
+    const [isLocked, setIsLocked] = useState<boolean>(false);
+    const [isBiometricEnabled, setIsBiometricEnabled] = useState<boolean>(false);
+    
+    const appState = useRef(AppState.currentState);
+    const backgroundTimestamp = useRef<number | null>(null);
 
     useEffect(() => {
         const restoreSession = async () => {
             try {
                 const storedUser = await AsyncStorage.getItem(AUTH_KEY);
-                setUser(storedUser ? JSON.parse(storedUser) : null);
+                const biometricFlag = await AsyncStorage.getItem(BIOMETRIC_KEY);
+                const isBioEnabled = biometricFlag === 'true';
+                
+                setIsBiometricEnabled(isBioEnabled);
+                
+                if (storedUser) {
+                    if (isBioEnabled) {
+                        setIsLocked(true);
+                    }
+                    setUser(JSON.parse(storedUser));
+                } else {
+                    setUser(null);
+                }
             } catch {
                 setUser(null);
             }
@@ -31,6 +52,31 @@ export default function AppNavigation() {
 
         restoreSession();
     }, []);
+
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', nextAppState => {
+            if (
+                appState.current.match(/inactive|background/) &&
+                nextAppState === 'active'
+            ) {
+                if (backgroundTimestamp.current && isBiometricEnabled && user) {
+                    const timePassed = Date.now() - backgroundTimestamp.current;
+                    const tenMinutes = 10 * 60 * 1000;
+                    if (timePassed > tenMinutes) {
+                         setIsLocked(true);
+                    }
+                }
+            } else if (nextAppState.match(/inactive|background/)) {
+                backgroundTimestamp.current = Date.now();
+            }
+
+            appState.current = nextAppState;
+        });
+
+        return () => {
+            subscription.remove();
+        };
+    }, [isBiometricEnabled, user]);
 
     const handleLogin = async (loggedUser: AuthUser) => {
         await AsyncStorage.setItem(AUTH_KEY, JSON.stringify(loggedUser));
@@ -44,6 +90,15 @@ export default function AppNavigation() {
 
     if (user === undefined) {
         return null;
+    }
+
+    if (user && isLocked) {
+        return (
+            <LockScreen 
+                onUnlock={() => setIsLocked(false)} 
+                onLogout={handleLogout} 
+            />
+        );
     }
 
     if (!user) {
@@ -130,5 +185,13 @@ export default function AppNavigation() {
                 )}
             </Stack.Screen>
         </Stack.Navigator>
+    );
+}
+
+export default function AppNavigation() {
+    return (
+        <ThemeProvider>
+            <AppNavigationInner />
+        </ThemeProvider>
     );
 }

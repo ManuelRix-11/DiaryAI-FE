@@ -12,6 +12,7 @@ import { Diary } from '@/model/diary';
 import { AuthUser } from '@/model/user';
 import RankCard from '../components/RankCard';
 import AchievementsBoard from '../components/AchievementsBoard';
+import { useThemeStyles, ThemeColors } from '../theme/ThemeContext';
 
 interface InsightsScreenProps {
     user: AuthUser;
@@ -22,6 +23,7 @@ const { width } = Dimensions.get('window');
 export default function InsightsScreen({ user }: InsightsScreenProps) {
     const insets = useSafeAreaInsets();
     const navigation = useNavigation();
+    const styles = useThemeStyles(createStyles);
 
     const [loading, setLoading] = useState(true);
     const [streak, setStreak] = useState(0);
@@ -277,10 +279,10 @@ export default function InsightsScreen({ user }: InsightsScreenProps) {
     );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#0f172a',
+        backgroundColor: colors.background,
     },
     scrollView: {
         flex: 1,
@@ -295,7 +297,7 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
     },
     backButtonText: {
-        color: '#c4b5fd',
+        color: colors.primaryLight,
         fontSize: 14,
         fontWeight: '600',
     },
@@ -304,13 +306,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 999,
-        backgroundColor: 'rgba(91, 60, 230, 0.12)',
+        backgroundColor: colors.primaryBg,
         borderWidth: 1,
-        borderColor: 'rgba(91, 60, 230, 0.35)',
+        borderColor: colors.primaryBorder,
         marginBottom: 14,
     },
     badgeText: {
-        color: '#c4b5fd',
+        color: colors.primaryLight,
         fontSize: 12,
         fontWeight: '700',
         letterSpacing: 0.6,
@@ -319,12 +321,12 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 38,
         fontWeight: '800',
-        color: '#e2e8f0',
+        color: colors.text,
         marginBottom: 8,
     },
     headerSubtitle: {
         fontSize: 16,
-        color: '#94a3b8',
+        color: colors.textSecondary,
         lineHeight: 22,
     },
     section: {
@@ -333,14 +335,14 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 22,
         fontWeight: '800',
-        color: '#e2e8f0',
+        color: colors.text,
         marginBottom: 16,
     },
     streakCard: {
         borderRadius: 24,
         padding: 24,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.08)',
+        borderColor: colors.border,
     },
     streakTop: {
         flexDirection: 'row',
@@ -378,7 +380,7 @@ const styles = StyleSheet.create({
         marginBottom: 2,
     },
     axisLabel: {
-        color: '#94a3b8',
+        color: colors.textSecondary,
         fontSize: 10,
     },
     rankBadge: {
@@ -402,11 +404,11 @@ const styles = StyleSheet.create({
     streakLabel: {
         fontSize: 18,
         fontWeight: '500',
-        color: '#94a3b8',
+        color: colors.textSecondary,
     },
     streakSubtitle: {
         fontSize: 14,
-        color: '#c4b5fd',
+        color: colors.primaryLight,
         marginTop: 4,
     },
     progressContainer: {
@@ -418,7 +420,7 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     progressLabelText: {
-        color: '#94a3b8',
+        color: colors.textSecondary,
         fontSize: 12,
         fontWeight: '600',
     },
@@ -440,7 +442,7 @@ const styles = StyleSheet.create({
     },
     toggleContainer: {
         flexDirection: 'row',
-        backgroundColor: 'rgba(255,255,255,0.05)',
+        backgroundColor: colors.surfaceAlt,
         borderRadius: 16,
         padding: 4,
     },
@@ -450,22 +452,22 @@ const styles = StyleSheet.create({
         borderRadius: 12,
     },
     toggleBtnActive: {
-        backgroundColor: 'rgba(91, 60, 230, 0.3)',
+        backgroundColor: colors.primaryBg,
     },
     toggleText: {
-        color: '#94a3b8',
+        color: colors.textSecondary,
         fontSize: 12,
         fontWeight: '700',
     },
     toggleTextActive: {
-        color: '#e2e8f0',
+        color: colors.text,
     },
     chartCard: {
-        backgroundColor: 'rgba(255,255,255,0.03)',
+        backgroundColor: colors.surface,
         borderRadius: 24,
         padding: 20,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.05)',
+        borderColor: colors.border,
         height: 250,
     },
     chartArea: {
@@ -482,7 +484,7 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
         justifyContent: 'flex-end',
-        backgroundColor: 'rgba(255,255,255,0.02)',
+        backgroundColor: colors.surfaceAlt,
         borderRadius: 4,
         marginBottom: 8,
         overflow: 'hidden',
@@ -492,7 +494,7 @@ const styles = StyleSheet.create({
         borderRadius: 4,
     },
     dayLabel: {
-        color: '#94a3b8',
+        color: colors.textSecondary,
         fontSize: 10,
         fontWeight: '600',
         textTransform: 'uppercase',

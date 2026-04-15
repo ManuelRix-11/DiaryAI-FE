@@ -23,6 +23,7 @@ import DrawingCanvas, { DrawingCanvasRef } from '../components/DrawingCanvas';
 import DrawingToolbar from '../components/DrawingToolbar';
 import { Tool } from '@/src/types/WritingProps';
 import { diariesApi } from '@/src/api/diaries';
+import { useThemeStyles, ThemeColors } from '../theme/ThemeContext';
 
 type BlockType = 'text' | 'image' | 'file';
 
@@ -45,6 +46,7 @@ interface WritingScreenProps {
 export default function WritingScreen({ navigation, route }: WritingScreenProps) {
     const title = route?.params?.title || 'New Entry';
     const insets = useSafeAreaInsets();
+    const styles = useThemeStyles(createStyles);
     const [mode, setMode] = useState<Mode>('text');
     const [showToolbar, setShowToolbar] = useState<boolean>(false);
 
@@ -227,7 +229,7 @@ export default function WritingScreen({ navigation, route }: WritingScreenProps)
             <KeyboardAvoidingView style={styles.keyboardView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
                 <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
                     <TouchableOpacity onPress={handleClose} style={styles.headerButton}>
-                        <Ionicons name="close" size={26} color="#e2e8f0" />
+                        <Ionicons name="close" size={26} color={styles.headerTitle.color} />
                     </TouchableOpacity>
 
                     <View style={styles.headerCenter}>
@@ -259,7 +261,7 @@ export default function WritingScreen({ navigation, route }: WritingScreenProps)
                                             multiline
                                             scrollEnabled={false}
                                             placeholder={index === 0 && blocks.length === 1 ? 'Start writing...' : ''}
-                                            placeholderTextColor="#475569"
+                                            placeholderTextColor={styles.headerDate.color as string}
                                             value={block.content}
                                             onChangeText={(txt) => updateTextBlock(block.id, txt)}
                                             onSelectionChange={(e) => handleSelectionChange(block.id, e)}
@@ -279,7 +281,7 @@ export default function WritingScreen({ navigation, route }: WritingScreenProps)
                                     return (
                                         <View key={block.id} style={styles.blockWrapper}>
                                             <View style={styles.fileBlock}>
-                                                <Ionicons name="document-text" size={24} color="#94a3b8" />
+                                                <Ionicons name="document-text" size={24} color={styles.headerDate.color} />
                                                 <Text style={styles.fileName}>{block.name}</Text>
                                             </View>
                                             <TouchableOpacity style={styles.deleteBlockButton} onPress={() => removeBlock(block.id)}>
@@ -337,27 +339,27 @@ export default function WritingScreen({ navigation, route }: WritingScreenProps)
                         <Ionicons
                             name={mode === 'text' ? 'brush-outline' : 'text-outline'}
                             size={24}
-                            color="#e2e8f0"
+                            color={styles.headerTitle.color}
                         />
                         <Text style={styles.toolbarButtonText}>{mode === 'text' ? 'Draw' : 'Type'}</Text>
                     </TouchableOpacity>
 
                     {mode === 'draw' && (
                         <TouchableOpacity style={styles.toolbarButton} onPress={() => setShowToolbar(!showToolbar)}>
-                            <Ionicons name="construct-outline" size={24} color="#c4b5fd" />
-                            <Text style={[styles.toolbarButtonText, { color: '#c4b5fd' }]}>Tools</Text>
+                            <Ionicons name="construct-outline" size={24} color={styles.headerTitle.color} />
+                            <Text style={styles.toolbarButtonText}>Tools</Text>
                         </TouchableOpacity>
                     )}
 
                     {mode === 'text' && (
                         <>
                             <TouchableOpacity style={styles.toolbarButton} onPress={handlePickImage}>
-                                <Ionicons name="image-outline" size={24} color="#e2e8f0" />
+                                <Ionicons name="image-outline" size={24} color={styles.headerTitle.color} />
                                 <Text style={styles.toolbarButtonText}>Image</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity style={styles.toolbarButton} onPress={handlePickDocument}>
-                                <Ionicons name="attach-outline" size={24} color="#e2e8f0" />
+                                <Ionicons name="attach-outline" size={24} color={styles.headerTitle.color} />
                                 <Text style={styles.toolbarButtonText}>Attach</Text>
                             </TouchableOpacity>
                         </>
@@ -368,8 +370,8 @@ export default function WritingScreen({ navigation, route }: WritingScreenProps)
     );
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#0f172a' },
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
     keyboardView: { flex: 1 },
     header: {
         flexDirection: 'row',
@@ -377,18 +379,18 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 16,
         paddingBottom: 14,
-        backgroundColor: '#0f172a',
+        backgroundColor: colors.background,
         borderBottomWidth: 1,
-        borderBottomColor: '#1e293b',
+        borderBottomColor: colors.border,
     },
     headerButton: { padding: 8 },
     headerCenter: { alignItems: 'center' },
     headerTitle: {
-        color: '#e2e8f0',
+        color: colors.text,
         fontSize: 16,
         fontWeight: '700',
     },
-    headerDate: { color: '#94a3b8', fontSize: 12, marginTop: 4 },
+    headerDate: { color: colors.textSecondary, fontSize: 12, marginTop: 4 },
     saveButton: { borderRadius: 18, overflow: 'hidden' },
     saveGradient: { paddingVertical: 7, paddingHorizontal: 16 },
     saveText: { color: 'white', fontWeight: '700', fontSize: 14 },
@@ -396,24 +398,24 @@ const styles = StyleSheet.create({
     scrollContainer: { flex: 1 },
     scrollContent: { padding: 20, paddingBottom: 110 },
     textInputBlock: {
-        color: '#f8fafc',
+        color: colors.text,
         fontSize: 16,
         lineHeight: 24,
         paddingVertical: 6,
         textAlignVertical: 'top',
     },
     blockWrapper: { marginVertical: 10, position: 'relative' },
-    imageBlock: { width: '100%', height: 250, borderRadius: 16, backgroundColor: '#1e293b' },
+    imageBlock: { width: '100%', height: 250, borderRadius: 16, backgroundColor: colors.surfaceAlt },
     fileBlock: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#111c33',
+        backgroundColor: colors.surface,
         padding: 16,
         borderRadius: 16,
         borderWidth: 1,
-        borderColor: '#243149',
+        borderColor: colors.border,
     },
-    fileName: { color: '#f8fafc', marginLeft: 12, fontSize: 14, fontWeight: '600' },
+    fileName: { color: colors.text, marginLeft: 12, fontSize: 14, fontWeight: '600' },
     deleteBlockButton: {
         position: 'absolute',
         top: 8,
@@ -427,10 +429,10 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         alignItems: 'center',
         paddingTop: 12,
-        backgroundColor: '#111c33',
+        backgroundColor: colors.surface,
         borderTopWidth: 1,
-        borderTopColor: '#243149',
+        borderTopColor: colors.border,
     },
     toolbarButton: { alignItems: 'center', justifyContent: 'center' },
-    toolbarButtonText: { color: '#94a3b8', fontSize: 10, marginTop: 4, fontWeight: '600' },
+    toolbarButtonText: { color: colors.textSecondary, fontSize: 10, marginTop: 4, fontWeight: '600' },
 });

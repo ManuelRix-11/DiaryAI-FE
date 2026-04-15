@@ -15,6 +15,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { usersApi } from '@/src/api/users';
 import { AuthUser } from "@/model/user";
+import { useThemeStyles, ThemeColors } from '../theme/ThemeContext';
 
 type Mode = 'login' | 'register';
 
@@ -24,6 +25,7 @@ type AuthScreenProps = {
 
 export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
     const insets = useSafeAreaInsets();
+    const styles = useThemeStyles(createStyles);
     const [mode, setMode] = useState<Mode>('login');
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -209,10 +211,10 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
     );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#0f172a',
+        backgroundColor: colors.background,
     },
     keyboardAvoidingView: {
         flex: 1,
@@ -230,13 +232,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 999,
-        backgroundColor: 'rgba(91, 60, 230, 0.12)',
+        backgroundColor: colors.primaryBg,
         borderWidth: 1,
-        borderColor: 'rgba(91, 60, 230, 0.35)',
+        borderColor: colors.primaryBorder,
         marginBottom: 14,
     },
     badgeText: {
-        color: '#c4b5fd',
+        color: colors.primaryLight,
         fontSize: 12,
         fontWeight: '700',
         letterSpacing: 0.6,
@@ -250,20 +252,20 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 34,
         fontWeight: '800',
-        color: '#e2e8f0',
+        color: colors.text,
         marginBottom: 8,
         textAlign: 'center',
     },
     subtitle: {
         fontSize: 16,
-        color: '#94a3b8',
+        color: colors.textSecondary,
         lineHeight: 22,
         textAlign: 'center',
         maxWidth: 320,
     },
     card: {
-        backgroundColor: '#111c33',
-        borderColor: '#243149',
+        backgroundColor: colors.surface,
+        borderColor: colors.border,
         borderWidth: 1,
         borderRadius: 24,
         padding: 18,
@@ -279,34 +281,34 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         borderRadius: 14,
         alignItems: 'center',
-        backgroundColor: '#0f172a',
+        backgroundColor: colors.background,
         borderWidth: 1,
-        borderColor: '#334155',
+        borderColor: colors.border,
     },
     toggleButtonActive: {
-        borderColor: '#5B3CE6',
-        backgroundColor: '#17213a',
+        borderColor: colors.primary,
+        backgroundColor: colors.surfaceAlt,
     },
     toggleText: {
-        color: '#94a3b8',
+        color: colors.textSecondary,
         fontWeight: '700',
     },
     toggleTextActive: {
-        color: '#e2e8f0',
+        color: colors.text,
     },
     field: {
         gap: 8,
     },
     label: {
-        color: '#cbd5e1',
+        color: colors.textSecondary,
         fontSize: 14,
         fontWeight: '600',
     },
     input: {
-        backgroundColor: '#0f172a',
-        color: '#e2e8f0',
+        backgroundColor: colors.background,
+        color: colors.text,
         borderWidth: 1,
-        borderColor: '#334155',
+        borderColor: colors.border,
         borderRadius: 14,
         paddingHorizontal: 14,
         paddingVertical: 14,

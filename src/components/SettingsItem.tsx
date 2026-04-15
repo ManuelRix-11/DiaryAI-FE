@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Switch, TextInput } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SettingItemProps } from '@/src/types/SettingsProps';
+import { useThemeStyles, ThemeColors, useTheme } from '../theme/ThemeContext';
 
 export default function SettingItem({
                                         icon,
@@ -14,6 +15,9 @@ export default function SettingItem({
                                         onChangeText,
                                         secureTextEntry,
                                     }: SettingItemProps) {
+    const { isDark } = useTheme();
+    const styles = useThemeStyles(createStyles);
+    
     return (
         <TouchableOpacity
             style={styles.settingItem}
@@ -46,8 +50,8 @@ export default function SettingItem({
                     <Switch
                         value={value}
                         onValueChange={onToggle}
-                        trackColor={{ false: '#334155', true: '#5B3CE6' }}
-                        thumbColor={value ? '#ffffff' : '#94a3b8'}
+                        trackColor={{ false: isDark ? '#334155' : '#cbd5e1', true: styles.iconContainer.backgroundColor as string || '#5B3CE6' }}
+                        thumbColor={value ? '#ffffff' : '#f8fafc'}
                     />
                 )}
 
@@ -70,11 +74,11 @@ export default function SettingItem({
     );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
     settingItem: {
-        backgroundColor: '#111c33',
+        backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: '#243149',
+        borderColor: colors.border,
         borderRadius: 16,
         padding: 16,
         marginBottom: 12,
@@ -106,12 +110,12 @@ const styles = StyleSheet.create({
     settingTitle: {
         fontSize: 16,
         fontWeight: '700',
-        color: '#e2e8f0',
+        color: colors.text,
         marginBottom: 2,
     },
     settingDescription: {
         fontSize: 13,
-        color: '#94a3b8',
+        color: colors.textSecondary,
         lineHeight: 18,
     },
     settingRight: {
@@ -119,18 +123,18 @@ const styles = StyleSheet.create({
     },
     arrow: {
         fontSize: 26,
-        color: '#94a3b8',
+        color: colors.textSecondary,
         fontWeight: '300',
         marginTop: -2,
     },
     valueText: {
         fontSize: 14,
-        color: '#94a3b8',
+        color: colors.textSecondary,
         fontWeight: '600',
     },
     inputField: {
         fontSize: 14,
-        color: '#e2e8f0',
+        color: colors.text,
         fontWeight: '600',
         minWidth: 100,
         textAlign: 'right',

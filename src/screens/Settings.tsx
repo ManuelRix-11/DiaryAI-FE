@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     StyleSheet,
     Text,
@@ -10,11 +10,15 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as LocalAuthentication from 'expo-local-authentication';
+import { Ionicons } from '@expo/vector-icons';
 
 import Navbar from '../components/_navbar';
 import ProfileHeader from '../components/ProfileHeader';
 import SettingItem from '../components/SettingsItem';
 import { AuthUser } from '@/model/user';
+import { useTheme, useThemeStyles, ThemeMode, ThemeColors } from '../theme/ThemeContext';
 
 type SettingsScreenProps = {
     onLogout?: () => void;
@@ -24,11 +28,44 @@ type SettingsScreenProps = {
 export default function SettingsScreen({ onLogout, user }: SettingsScreenProps) {
     const insets = useSafeAreaInsets();
     const navigation = useNavigation();
+    const { theme, setTheme } = useTheme();
+    const styles = useThemeStyles(createStyles);
 
     const [notifications, setNotifications] = useState(true);
-    const [darkMode, setDarkMode] = useState(true);
     const [analytics, setAnalytics] = useState(false);
-    const [biometric, setBiometric] = useState(true);
+    const [biometric, setBiometric] = useState(false);
+
+    const BIOMETRIC_KEY = '@diaryai:biometric_enabled';
+
+    useEffect(() => {
+        const loadSettings = async () => {
+            try {
+                const bio = await AsyncStorage.getItem(BIOMETRIC_KEY);
+                setBiometric(bio === 'true');
+            } catch (e) {
+                console.error('Error loading settings', e);
+            }
+        };
+        loadSettings();
+    }, []);
+
+    const handleBiometricToggle = async (value: boolean) => {
+        if (value) {
+            const hasHardware = await LocalAuthentication.hasHardwareAsync();
+            const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+
+            if (!hasHardware || !isEnrolled) {
+                Alert.alert(
+                    'Biometria non disponibile',
+                    'Il dispositivo non supporta o non ha registrato il Face ID / Touch ID.',
+                );
+                return;
+            }
+        }
+        
+        setBiometric(value);
+        await AsyncStorage.setItem(BIOMETRIC_KEY, value ? 'true' : 'false');
+    };
 
     const handleEditProfile = () => {
         navigation.navigate('Profile' as never);
@@ -94,6 +131,37 @@ export default function SettingsScreen({ onLogout, user }: SettingsScreenProps) 
                 </View>
 
                 <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Aspetto</Text>
+                    <View style={styles.themeSelector}>
+                        {([
+                            { id: 'light', label: 'Chiaro', icon: 'sunny' },
+                            { id: 'dark', label: 'Scuro', icon: 'moon' },
+                            { id: 'system', label: 'Auto', icon: 'phone-portrait-outline' }
+                        ] as const).map(option => {
+                            const isActive = theme === option.id;
+                            return (
+                                <TouchableOpacity
+                                    key={option.id}
+                                    style={[styles.themeOption, isActive && styles.themeOptionActive]}
+                                    activeOpacity={0.8}
+                                    onPress={() => setTheme(option.id)}
+                                >
+                                    <Ionicons 
+                                        name={option.icon} 
+                                        size={20} 
+                                        color={isActive ? '#ffffff' : styles.themeOptionText.color} 
+                                        style={{ marginBottom: 6 }} 
+                                    />
+                                    <Text style={[styles.themeOptionText, isActive && styles.themeOptionTextActive]}>
+                                        {option.label}
+                                    </Text>
+                                </TouchableOpacity>
+                            );
+                        })}
+                    </View>
+                </View>
+
+                <View style={styles.section}>
                     <Text style={styles.sectionTitle}>App preferences</Text>
                     <SettingItem
                         icon="🔔"
@@ -102,14 +170,6 @@ export default function SettingsScreen({ onLogout, user }: SettingsScreenProps) 
                         type="toggle"
                         value={notifications}
                         onToggle={setNotifications}
-                    />
-                    <SettingItem
-                        icon="🌙"
-                        title="Dark Mode"
-                        description="Always on"
-                        type="toggle"
-                        value={darkMode}
-                        onToggle={setDarkMode}
                     />
                     <SettingItem
                         icon="📈"
@@ -125,7 +185,7 @@ export default function SettingsScreen({ onLogout, user }: SettingsScreenProps) 
                         description="Face ID / Touch ID"
                         type="toggle"
                         value={biometric}
-                        onToggle={setBiometric}
+                        onToggle={handleBiometricToggle}
                     />
                 </View>
 
@@ -154,10 +214,10 @@ export default function SettingsScreen({ onLogout, user }: SettingsScreenProps) 
     );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#0f172a',
+        backgroundColor: colors.background,
     },
     scrollView: {
         flex: 1,
@@ -171,13 +231,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 999,
-        backgroundColor: 'rgba(91, 60, 230, 0.12)',
+        backgroundColor: colors.primaryBg,
         borderWidth: 1,
-        borderColor: 'rgba(91, 60, 230, 0.35)',
+        borderColor: colors.primaryBorder,
         marginBottom: 14,
     },
     badgeText: {
-        color: '#c4b5fd',
+        color: colors.primaryLight,
         fontSize: 12,
         fontWeight: '700',
         letterSpacing: 0.6,
@@ -186,12 +246,12 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 38,
         fontWeight: '800',
-        color: '#e2e8f0',
+        color: colors.text,
         marginBottom: 8,
     },
     headerSubtitle: {
         fontSize: 16,
-        color: '#94a3b8',
+        color: colors.textSecondary,
         lineHeight: 22,
         maxWidth: 340,
     },
@@ -202,10 +262,37 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 14,
         fontWeight: '800',
-        color: '#94a3b8',
+        color: colors.textSecondary,
         textTransform: 'uppercase',
         letterSpacing: 0.8,
         marginBottom: 12,
+    },
+    themeSelector: {
+        flexDirection: 'row',
+        gap: 12,
+        marginBottom: 8,
+    },
+    themeOption: {
+        flex: 1,
+        paddingVertical: 14,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: colors.surface,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: colors.border,
+    },
+    themeOptionActive: {
+        backgroundColor: colors.primary,
+        borderColor: colors.primary,
+    },
+    themeOptionText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: colors.textSecondary,
+    },
+    themeOptionTextActive: {
+        color: '#ffffff',
     },
     dangerZone: {
         paddingHorizontal: 20,
@@ -214,9 +301,9 @@ const styles = StyleSheet.create({
         gap: 12,
     },
     logoutButton: {
-        backgroundColor: '#111c33',
+        backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: '#243149',
+        borderColor: colors.border,
         borderRadius: 16,
         padding: 16,
         alignItems: 'center',
@@ -224,7 +311,7 @@ const styles = StyleSheet.create({
     logoutText: {
         fontSize: 16,
         fontWeight: '700',
-        color: '#e2e8f0',
+        color: colors.text,
     },
     deleteButton: {
         borderRadius: 16,

@@ -8,6 +8,7 @@ import { diariesApi } from '@/src/api/diaries';
 import { Diary } from '@/model/diary';
 import { AuthUser } from '@/model/user';
 import DiaryCard from '../components/DiaryCard';
+import { useThemeStyles, ThemeColors } from '../theme/ThemeContext';
 
 interface HistoryScreenProps {
     user: AuthUser;
@@ -16,6 +17,7 @@ interface HistoryScreenProps {
 export default function HistoryScreen({ user }: HistoryScreenProps) {
     const insets = useSafeAreaInsets();
     const navigation = useNavigation();
+    const styles = useThemeStyles(createStyles);
     const [diaries, setDiaries] = useState<Diary[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -97,10 +99,10 @@ export default function HistoryScreen({ user }: HistoryScreenProps) {
     );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#0f172a',
+        backgroundColor: colors.background,
     },
     header: {
         paddingHorizontal: 20,
@@ -111,13 +113,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 999,
-        backgroundColor: 'rgba(91, 60, 230, 0.12)',
+        backgroundColor: colors.primaryBg,
         borderWidth: 1,
-        borderColor: 'rgba(91, 60, 230, 0.35)',
+        borderColor: colors.primaryBorder,
         marginBottom: 14,
     },
     badgeText: {
-        color: '#c4b5fd',
+        color: colors.primaryLight,
         fontSize: 12,
         fontWeight: '700',
         letterSpacing: 0.6,
@@ -126,12 +128,12 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 38,
         fontWeight: '800',
-        color: '#e2e8f0',
+        color: colors.text,
         marginBottom: 8,
     },
     headerSubtitle: {
         fontSize: 16,
-        color: '#94a3b8',
+        color: colors.textSecondary,
         lineHeight: 22,
     },
     listContainer: {
@@ -148,7 +150,7 @@ const styles = StyleSheet.create({
         paddingTop: 60,
     },
     emptyText: {
-        color: '#94a3b8',
+        color: colors.textSecondary,
         fontSize: 16,
     },
 });

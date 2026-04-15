@@ -1,5 +1,6 @@
 import { apiClient } from './apiClient';
 import { Diary } from "@/model/diary";
+import { invalidateCacheByPrefix } from '../utils/apiCache';
 
 export type CreateDiaryPayload = {
     title: string;
@@ -19,22 +20,34 @@ export type SentimentResponse = {
 
 export const diariesApi = {
     list: () =>
-        apiClient.get<Diary[]>('/diaries/'),
+        apiClient.get<Diary[]>('/diaries/', undefined, 'diaries_list'),
 
     getById: (id: string) =>
-        apiClient.get<Diary>(`/diaries/${id}`),
+        apiClient.get<Diary>(`/diaries/${id}`, undefined, `diaries_${id}`),
 
     getByUserId: (userId: string) =>
-        apiClient.get<Diary[]>(`/diaries/user/${userId}`),
+        apiClient.get<Diary[]>(`/diaries/user/${userId}`, undefined, `diaries_user_${userId}`),
 
-    create: (payload: CreateDiaryPayload) =>
-        apiClient.post<Record<string, string>>('/diaries/', payload),
+    create: async (payload: CreateDiaryPayload) => {
+        const res = await apiClient.post<Record<string, string>>('/diaries/', payload);
+        await invalidateCacheByPrefix('diaries_');
+        await invalidateCacheByPrefix('stats_');
+        return res;
+    },
 
-    update: (id: string, payload: UpdateDiaryPayload) =>
-        apiClient.put<Diary>(`/diaries/${id}`, payload),
+    update: async (id: string, payload: UpdateDiaryPayload) => {
+        const res = await apiClient.put<Diary>(`/diaries/${id}`, payload);
+        await invalidateCacheByPrefix('diaries_');
+        await invalidateCacheByPrefix('stats_');
+        return res;
+    },
 
-    remove: (id: string) =>
-        apiClient.delete<void>(`/diaries/${id}`),
+    remove: async (id: string) => {
+        const res = await apiClient.delete<void>(`/diaries/${id}`);
+        await invalidateCacheByPrefix('diaries_');
+        await invalidateCacheByPrefix('stats_');
+        return res;
+    },
 
     analyzeSentiment: (text: string) =>
         apiClient.post<SentimentResponse>(`/diaries/sentiment?text=${encodeURIComponent(text)}`),

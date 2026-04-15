@@ -12,6 +12,7 @@ import Navbar from '../components/_navbar';
 import ProfileHeader from '../components/ProfileHeader';
 import SettingItem from '../components/SettingsItem';
 import { AuthUser } from '@/model/user';
+import { useThemeStyles, ThemeColors } from '../theme/ThemeContext';
 
 type ProfileScreenProps = {
     user: AuthUser;
@@ -19,6 +20,7 @@ type ProfileScreenProps = {
 
 export default function ProfileScreen({ user }: ProfileScreenProps) {
     const insets = useSafeAreaInsets();
+    const styles = useThemeStyles(createStyles);
 
     const [privateStats, setPrivateStats] = useState(true);
     const [email, setEmail] = useState(user?.email || '');
@@ -80,10 +82,10 @@ export default function ProfileScreen({ user }: ProfileScreenProps) {
     );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#0f172a',
+        backgroundColor: colors.background,
     },
     scrollView: {
         flex: 1,
@@ -97,13 +99,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 999,
-        backgroundColor: 'rgba(91, 60, 230, 0.12)',
+        backgroundColor: colors.primaryBg,
         borderWidth: 1,
-        borderColor: 'rgba(91, 60, 230, 0.35)',
+        borderColor: colors.primaryBorder,
         marginBottom: 14,
     },
     badgeText: {
-        color: '#c4b5fd',
+        color: colors.primaryLight,
         fontSize: 12,
         fontWeight: '700',
         letterSpacing: 0.6,
@@ -112,12 +114,12 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 38,
         fontWeight: '800',
-        color: '#e2e8f0',
+        color: colors.text,
         marginBottom: 8,
     },
     headerSubtitle: {
         fontSize: 16,
-        color: '#94a3b8',
+        color: colors.textSecondary,
         lineHeight: 22,
         maxWidth: 340,
     },
@@ -128,7 +130,7 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 14,
         fontWeight: '800',
-        color: '#94a3b8',
+        color: colors.textSecondary,
         textTransform: 'uppercase',
         letterSpacing: 0.8,
         marginBottom: 12,

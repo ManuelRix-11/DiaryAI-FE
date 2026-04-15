@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, ScrollView, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useThemeStyles, ThemeColors } from '../theme/ThemeContext';
 
 import Navbar from '../components/_navbar';
 import StatsCard from '@/src/components/StatsCard';
@@ -18,6 +19,7 @@ type HomeScreenProps = {
 export default function HomeScreen({ user }: HomeScreenProps) {
     const insets = useSafeAreaInsets();
     const navigation = useNavigation();
+    const styles = useThemeStyles(createStyles);
 
     const firstName = user.username?.trim()?.split(' ')?.[0] || 'there';
 
@@ -162,10 +164,10 @@ export default function HomeScreen({ user }: HomeScreenProps) {
     );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#0f172a',
+        backgroundColor: colors.background,
     },
     scrollView: {
         flex: 1,
@@ -179,13 +181,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 999,
-        backgroundColor: 'rgba(91, 60, 230, 0.12)',
+        backgroundColor: colors.primaryBg,
         borderWidth: 1,
-        borderColor: 'rgba(91, 60, 230, 0.35)',
+        borderColor: colors.primaryBorder,
         marginBottom: 14,
     },
     badgeText: {
-        color: '#c4b5fd',
+        color: colors.primaryLight,
         fontSize: 12,
         fontWeight: '700',
         letterSpacing: 0.6,
@@ -194,13 +196,13 @@ const styles = StyleSheet.create({
     heroTitle: {
         fontSize: 38,
         fontWeight: '800',
-        color: '#e2e8f0',
+        color: colors.text,
         lineHeight: 44,
         marginBottom: 8,
     },
     heroSubtitle: {
         fontSize: 16,
-        color: '#94a3b8',
+        color: colors.textSecondary,
         lineHeight: 23,
         maxWidth: 320,
     },
@@ -209,7 +211,7 @@ const styles = StyleSheet.create({
         width: 120,
         height: 4,
         borderRadius: 999,
-        backgroundColor: 'rgba(91, 60, 230, 0.5)',
+        backgroundColor: colors.primaryBorder,
     },
     statsContainer: {
         flexDirection: 'row',
@@ -227,12 +229,12 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 22,
         fontWeight: '800',
-        color: '#e2e8f0',
+        color: colors.text,
         marginBottom: 4,
     },
     sectionSubtitle: {
         fontSize: 14,
-        color: '#94a3b8',
+        color: colors.textSecondary,
         lineHeight: 20,
     },
     primaryActionWrapper: {
@@ -248,7 +250,7 @@ const styles = StyleSheet.create({
         padding: 22,
         justifyContent: 'space-between',
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.12)',
+        borderColor: colors.border,
     },
     primaryActionIcon: {
         fontSize: 40,
