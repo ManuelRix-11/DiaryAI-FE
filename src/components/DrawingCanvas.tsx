@@ -1,6 +1,7 @@
 import React, { useRef, useState, useImperativeHandle, forwardRef } from 'react';
 import { StyleSheet, View, PanResponder, GestureResponderEvent } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import { useThemeStyles, ThemeColors, useTheme } from '../theme/ThemeContext';
 import { DrawingCanvasProps, Tool, PathData } from '@/src/types/WritingProps';
 
 export interface DrawingCanvasRef {
@@ -10,6 +11,8 @@ export interface DrawingCanvasRef {
 
 const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
     ({ color, strokeWidth, tool, isDrawingMode }, ref) => {
+        const styles = useThemeStyles(createStyles);
+        const { colors } = useTheme();
         const [paths, setPaths] = useState<PathData[]>([]);
         const [currentPath, setCurrentPath] = useState<string>('');
         const currentPathRef = useRef<string>('');
@@ -84,7 +87,7 @@ const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
                         <Path
                             key={index}
                             d={item.path}
-                            stroke={item.tool === 'eraser' ? '#0f172a' : item.color}
+                            stroke={item.tool === 'eraser' ? colors.background : item.color}
                             strokeWidth={item.tool === 'eraser' ? item.strokeWidth * 3 : item.strokeWidth}
                             fill="none"
                             strokeLinecap="round"
@@ -95,7 +98,7 @@ const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
                     {currentPath && (
                         <Path
                             d={currentPath}
-                            stroke={tool === 'eraser' ? '#0f172a' : color}
+                            stroke={tool === 'eraser' ? colors.background : color}
                             strokeWidth={tool === 'eraser' ? strokeWidth * 3 : strokeWidth}
                             fill="none"
                             strokeLinecap="round"
@@ -112,17 +115,17 @@ DrawingCanvas.displayName = 'DrawingCanvas';
 
 export default DrawingCanvas;
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
     canvasContainer: {
         flex: 1,
-        backgroundColor: '#0f172a',
+        backgroundColor: colors.background,
         marginHorizontal: 16,
         marginTop: 16,
         marginBottom: 16,
         borderRadius: 22,
         overflow: 'hidden',
         borderWidth: 1,
-        borderColor: '#243149',
+        borderColor: colors.border,
     },
     canvas: {
         flex: 1,

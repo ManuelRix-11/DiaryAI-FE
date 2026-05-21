@@ -12,6 +12,7 @@ import ProfileScreen from '@/src/screens/Profile';
 import NewDiaryModal from '@/src/components/NewDiaryModal';
 import HistoryScreen from '@/src/screens/HistoryScreen';
 import InsightsScreen from '@/src/screens/InsightsScreen';
+import PsychologistScreen from '@/src/screens/PsychologistScreen';
 import LockScreen from '../screens/LockScreen';
 import { ThemeProvider } from '../theme/ThemeContext';
 
@@ -139,6 +140,15 @@ function AppNavigationInner() {
                         {...props}
                         user={user}
                         onLogout={handleLogout}
+                    />
+                )}
+            </Stack.Screen>
+
+            <Stack.Screen name="Psychologist">
+                {(props) => (
+                    <PsychologistScreen
+                        {...props}
+                        user={user}
                     />
                 )}
             </Stack.Screen>

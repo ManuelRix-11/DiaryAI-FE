@@ -27,7 +27,7 @@ export const lightColors = {
     textSecondary: '#475569',
     textTertiary: '#94a3b8',
     primary: '#5B3CE6',
-    primaryLight: '#c4b5fd',
+    primaryLight: '#5B3CE6',
     primaryBg: 'rgba(91, 60, 230, 0.08)',
     primaryBorder: 'rgba(91, 60, 230, 0.2)',
     danger: '#e11d48',

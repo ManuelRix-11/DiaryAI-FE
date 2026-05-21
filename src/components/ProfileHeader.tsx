@@ -106,6 +106,6 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
     editButtonText: {
         fontSize: 14,
         fontWeight: '700',
-        color: colors.primaryLight,
+        color: colors.primary,
     },
 });

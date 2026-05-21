@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     Animated,
 } from 'react-native';
+import { useThemeStyles, ThemeColors } from '../theme/ThemeContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import {CardProps} from "@/src/types/CardProps";
 
@@ -13,6 +14,7 @@ export default function Card({ title, description}: CardProps) {
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const slideAnim = useRef(new Animated.Value(20)).current;
     const scaleAnim = useRef(new Animated.Value(1)).current;
+    const styles = useThemeStyles(createStyles);
 
     useEffect(() => {
         Animated.parallel([
@@ -77,16 +79,16 @@ export default function Card({ title, description}: CardProps) {
     );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
     projectCard: {
         marginBottom: 24,
         borderRadius: 16,
         overflow: 'hidden',
     },
     cardGradient: {
-        backgroundColor: '#1e293b',
+        backgroundColor: colors.surfaceAlt,
         borderWidth: 1,
-        borderColor: '#334155',
+        borderColor: colors.border,
         borderRadius: 16,
         padding: 24,
     },
@@ -96,17 +98,17 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         height: 3,
-        backgroundColor: '#60a5fa',
+        backgroundColor: colors.primary,
     },
     projectTitle: {
         fontSize: 22,
         fontWeight: '700',
-        color: '#e2e8f0',
+        color: colors.text,
         marginBottom: 12,
     },
     projectDescription: {
         fontSize: 16,
-        color: '#94a3b8',
+        color: colors.textSecondary,
         lineHeight: 24,
         marginBottom: 20,
     },

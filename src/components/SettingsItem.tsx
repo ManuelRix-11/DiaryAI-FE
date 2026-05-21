@@ -26,14 +26,9 @@ export default function SettingItem({
             activeOpacity={0.8}
         >
             <View style={styles.settingLeft}>
-                <LinearGradient
-                    colors={['#5B3CE6', '#E63C5B']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.iconContainer}
-                >
-                    <Text style={styles.icon}>{icon}</Text>
-                </LinearGradient>
+                <View style={styles.iconContainer}>
+                    {icon}
+                </View>
 
                 <View style={styles.settingText}>
                     <Text style={styles.settingTitle}>{title}</Text>
@@ -65,7 +60,7 @@ export default function SettingItem({
                         value={value as string}
                         onChangeText={onChangeText}
                         secureTextEntry={secureTextEntry}
-                        placeholderTextColor="#94a3b8"
+                        placeholderTextColor={styles.arrow.color as string || "#94a3b8"}
                         placeholder="Aggiungi..."
                     />
                 )}

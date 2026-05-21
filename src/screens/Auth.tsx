@@ -93,9 +93,6 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
                     showsVerticalScrollIndicator={false}
                 >
                     <View style={styles.hero}>
-                        <View style={styles.badge}>
-                            <Text style={styles.badgeText}>DiaryAI</Text>
-                        </View>
 
                         <Image
                             source={require('@/assets/img/logoNoText.png')}
@@ -143,7 +140,7 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
                                     value={name}
                                     onChangeText={setName}
                                     placeholder="Il tuo nome"
-                                    placeholderTextColor="#64748b"
+                                    placeholderTextColor={styles.label.color as string || "#64748b"}
                                     style={styles.input}
                                     editable={!loading}
                                 />
@@ -156,7 +153,7 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
                                 value={email}
                                 onChangeText={setEmail}
                                 placeholder="nome@email.com"
-                                placeholderTextColor="#64748b"
+                                placeholderTextColor={styles.label.color as string || "#64748b"}
                                 keyboardType="email-address"
                                 autoCapitalize="none"
                                 style={styles.input}
@@ -170,7 +167,7 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
                                 value={password}
                                 onChangeText={setPassword}
                                 placeholder="••••••••"
-                                placeholderTextColor="#64748b"
+                                placeholderTextColor={styles.label.color as string || "#64748b"}
                                 secureTextEntry
                                 style={styles.input}
                                 editable={!loading}
@@ -184,7 +181,7 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
                                     value={confirmPassword}
                                     onChangeText={setConfirmPassword}
                                     placeholder="••••••••"
-                                    placeholderTextColor="#64748b"
+                                    placeholderTextColor={styles.label.color as string || "#64748b"}
                                     secureTextEntry
                                     style={styles.input}
                                     editable={!loading}

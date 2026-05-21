@@ -12,6 +12,7 @@ import {
     Image,
     NativeSyntheticEvent,
     TextInputSelectionChangeEventData,
+    ActivityIndicator,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -23,7 +24,8 @@ import DrawingCanvas, { DrawingCanvasRef } from '../components/DrawingCanvas';
 import DrawingToolbar from '../components/DrawingToolbar';
 import { Tool } from '@/src/types/WritingProps';
 import { diariesApi } from '@/src/api/diaries';
-import { useThemeStyles, ThemeColors } from '../theme/ThemeContext';
+import { useTheme, useThemeStyles, ThemeColors } from '../theme/ThemeContext';
+import { NotificationsService } from '@/src/services/NotificationsService';
 
 type BlockType = 'text' | 'image' | 'file';
 
@@ -46,9 +48,15 @@ interface WritingScreenProps {
 export default function WritingScreen({ navigation, route }: WritingScreenProps) {
     const title = route?.params?.title || 'New Entry';
     const insets = useSafeAreaInsets();
+    const { colors } = useTheme();
     const styles = useThemeStyles(createStyles);
     const [mode, setMode] = useState<Mode>('text');
     const [showToolbar, setShowToolbar] = useState<boolean>(false);
+
+    const diaryId = route?.params?.id;
+    const [isLoading, setIsLoading] = useState<boolean>(!!diaryId);
+    const [isReadOnly, setIsReadOnly] = useState<boolean>(false);
+    const [loadedDate, setLoadedDate] = useState<Date>(new Date());
 
     const [selectedTool, setSelectedTool] = useState<Tool>('pen');
     const [selectedColor, setSelectedColor] = useState<string>('#000000');
@@ -65,6 +73,34 @@ export default function WritingScreen({ navigation, route }: WritingScreenProps)
     const inputRefs = useRef<{ [key: string]: TextInput | null }>({});
 
     const generateId = () => Date.now().toString() + Math.random().toString(36).substr(2, 9);
+
+    React.useEffect(() => {
+        if (diaryId) {
+            const fetchDiary = async () => {
+                try {
+                    const diary = await diariesApi.getById(diaryId);
+                    if (diary) {
+                        setBlocks([{ id: generateId(), type: 'text', content: diary.text || '' }]);
+                        const createdDate = new Date(diary.created_at);
+                        setLoadedDate(createdDate);
+                        
+                        const today = new Date();
+                        const isSameDay = createdDate.getDate() === today.getDate() &&
+                            createdDate.getMonth() === today.getMonth() &&
+                            createdDate.getFullYear() === today.getFullYear();
+                            
+                        setIsReadOnly(!isSameDay);
+                    }
+                } catch (error) {
+                    console.error("Error fetching diary:", error);
+                    Alert.alert('Errore', 'Impossibile caricare il diario.');
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+            fetchDiary();
+        }
+    }, [diaryId]);
 
     const updateTextBlock = (id: string, text: string) => {
         setBlocks(prev => prev.map(block => (
@@ -184,7 +220,6 @@ export default function WritingScreen({ navigation, route }: WritingScreenProps)
     };
 
     const handleSave = async () => {
-        const diaryId = route?.params?.id;
         const userId = route?.params?.userId;
         const passedTitle = title; // using local const derived from route?.params?.title
 
@@ -211,7 +246,7 @@ export default function WritingScreen({ navigation, route }: WritingScreenProps)
                 Alert.alert("Errore", "Impossibile salvare: dati mancanti (ID o user_id).");
                 return;
             }
-
+            await NotificationsService.recordDiaryWrittenToday();
             Alert.alert('Salvato', 'Il diario è stato salvato con successo!');
             navigation?.goBack();
         } catch (error) {
@@ -234,18 +269,31 @@ export default function WritingScreen({ navigation, route }: WritingScreenProps)
 
                     <View style={styles.headerCenter}>
                         <Text style={styles.headerTitle}>{title}</Text>
-                        <Text style={styles.headerDate}>{new Date().toLocaleDateString()}</Text>
+                        <Text style={styles.headerDate}>{loadedDate.toLocaleDateString()}</Text>
+                        {isReadOnly && (
+                            <Text style={{ color: colors.danger, fontSize: 10, fontWeight: '700', marginTop: 2 }}>
+                                Sola lettura
+                            </Text>
+                        )}
                     </View>
 
-                    <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-                        <LinearGradient colors={['#5B3CE6', '#F56C5B', '#E63C5B']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.saveGradient}>
-                            <Text style={styles.saveText}>Save</Text>
-                        </LinearGradient>
-                    </TouchableOpacity>
+                    {!isReadOnly ? (
+                        <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
+                            <LinearGradient colors={['#5B3CE6', '#F56C5B', '#E63C5B']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.saveGradient}>
+                                <Text style={styles.saveText}>Save</Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
+                    ) : (
+                        <View style={{ width: 60 }} />
+                    )}
                 </View>
 
                 <View style={styles.content}>
-                    {mode === 'text' ? (
+                    {isLoading ? (
+                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                            <ActivityIndicator size="large" color={colors.primary} />
+                        </View>
+                    ) : mode === 'text' ? (
                         <ScrollView
                             style={styles.scrollContainer}
                             contentContainerStyle={styles.scrollContent}
@@ -263,6 +311,7 @@ export default function WritingScreen({ navigation, route }: WritingScreenProps)
                                             placeholder={index === 0 && blocks.length === 1 ? 'Start writing...' : ''}
                                             placeholderTextColor={styles.headerDate.color as string}
                                             value={block.content}
+                                            editable={!isReadOnly}
                                             onChangeText={(txt) => updateTextBlock(block.id, txt)}
                                             onSelectionChange={(e) => handleSelectionChange(block.id, e)}
                                             onFocus={() => setActiveBlockId(block.id)}
@@ -296,6 +345,7 @@ export default function WritingScreen({ navigation, route }: WritingScreenProps)
 
                             <TouchableOpacity
                                 style={{ height: 100 }}
+                                disabled={isReadOnly}
                                 onPress={() => {
                                     const lastBlock = blocks[blocks.length - 1];
                                     if (lastBlock.type !== 'text') {
@@ -334,8 +384,9 @@ export default function WritingScreen({ navigation, route }: WritingScreenProps)
                     />
                 )}
 
-                <View style={[styles.bottomToolbar, { paddingBottom: insets.bottom + 10 }]}>
-                    <TouchableOpacity style={styles.toolbarButton} onPress={toggleMode}>
+                {!isReadOnly && !isLoading && (
+                    <View style={[styles.bottomToolbar, { paddingBottom: insets.bottom + 10 }]}>
+                        <TouchableOpacity style={styles.toolbarButton} onPress={toggleMode}>
                         <Ionicons
                             name={mode === 'text' ? 'brush-outline' : 'text-outline'}
                             size={24}
@@ -365,6 +416,7 @@ export default function WritingScreen({ navigation, route }: WritingScreenProps)
                         </>
                     )}
                 </View>
+                )}
             </KeyboardAvoidingView>
         </View>
     );

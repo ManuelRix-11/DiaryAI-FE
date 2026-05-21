@@ -1,6 +1,6 @@
 import { getCache, setCache } from '../utils/apiCache';
 
-const BASE_URL = 'http://10.167.78.209:8000';
+const BASE_URL = 'http://100.101.107.43:8000';
 
 type ApiOptions = RequestInit & {
     headers?: Record<string, string>;
@@ -42,7 +42,7 @@ export const apiClient = {
                 return cachedData;
             }
         }
-        
+
         const data = await request<T>(endpoint, { method: 'GET', headers });
         if (cacheKey) {
             await setCache(cacheKey, data);

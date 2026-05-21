@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, withSequence, Easing } from 'react-native-reanimated';
+import { Flame } from 'lucide-react-native';
 
 import Navbar from '../components/_navbar';
 import { diariesApi } from '@/src/api/diaries';
@@ -179,7 +180,7 @@ export default function InsightsScreen({ user }: InsightsScreenProps) {
                             >
                                 <View style={styles.streakTop}>
                                     <Animated.View style={[styles.flameContainer, animatedFlameStyle, isMilestoneHit && styles.flameGlow]}>
-                                        <Text style={styles.flameIcon}>🔥</Text>
+                                        <Flame size={32} color="#F56C5B" fill={streak > 0 ? "rgba(245, 108, 91, 0.4)" : "none"} />
                                     </Animated.View>
                                     <View style={styles.streakTextContainer}>
                                         <Text style={styles.streakNumber}>{streak} <Text style={styles.streakLabel}>giorni</Text></Text>
@@ -388,7 +389,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
         borderRadius: 12,
         paddingHorizontal: 8,
         paddingVertical: 4,
-        backgroundColor: 'rgba(255,255,255,0.05)',
+        backgroundColor: colors.surfaceHighlight,
         marginTop: 4,
     },
     rankText: {
@@ -399,7 +400,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
     streakNumber: {
         fontSize: 32,
         fontWeight: '800',
-        color: '#ffffff',
+        color: colors.text,
     },
     streakLabel: {
         fontSize: 18,

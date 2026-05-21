@@ -4,6 +4,7 @@ import * as LocalAuthentication from 'expo-local-authentication';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useThemeStyles, ThemeColors } from '../theme/ThemeContext';
 
 interface LockScreenProps {
     onUnlock: () => void;
@@ -12,6 +13,7 @@ interface LockScreenProps {
 
 export default function LockScreen({ onUnlock, onLogout }: LockScreenProps) {
     const insets = useSafeAreaInsets();
+    const styles = useThemeStyles(createStyles);
 
     const authenticate = async () => {
         try {
@@ -65,7 +67,7 @@ export default function LockScreen({ onUnlock, onLogout }: LockScreenProps) {
                 
                 <View style={styles.headerContainer}>
                     <View style={styles.iconContainer}>
-                        <Ionicons name="lock-closed" size={48} color="#c4b5fd" />
+                        <Ionicons name="lock-closed" size={48} color={styles.iconContainer.borderColor as string} />
                     </View>
                     <Text style={styles.title}>DiaryAI è Bloccato</Text>
                     <Text style={styles.subtitle}>
@@ -96,10 +98,10 @@ export default function LockScreen({ onUnlock, onLogout }: LockScreenProps) {
     );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#0f172a',
+        backgroundColor: colors.background,
     },
     content: {
         flex: 1,
@@ -115,23 +117,23 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         borderRadius: 50,
-        backgroundColor: 'rgba(91, 60, 230, 0.15)',
+        backgroundColor: colors.primaryBg,
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 24,
         borderWidth: 1,
-        borderColor: 'rgba(91, 60, 230, 0.3)',
+        borderColor: colors.primary,
     },
     title: {
         fontSize: 32,
         fontWeight: '800',
-        color: '#e2e8f0',
+        color: colors.text,
         marginBottom: 12,
         textAlign: 'center',
     },
     subtitle: {
         fontSize: 16,
-        color: '#94a3b8',
+        color: colors.textSecondary,
         textAlign: 'center',
         lineHeight: 24,
         maxWidth: 300,
@@ -162,7 +164,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     logoutText: {
-        color: '#94a3b8',
+        color: colors.textSecondary,
         fontSize: 15,
         fontWeight: '600',
         textDecorationLine: 'underline',

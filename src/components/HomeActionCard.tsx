@@ -1,20 +1,15 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { useThemeStyles, ThemeColors } from '../theme/ThemeContext';
 import { HomeActionCardProps } from '@/src/types/HomeProps';
 
-export default function HomeActionCard({ icon, label, gradientColors, onPress }: HomeActionCardProps) {
+export default function HomeActionCard({ icon, label, onPress }: HomeActionCardProps) {
+    const styles = useThemeStyles(createStyles);
     return (
         <TouchableOpacity style={styles.actionCard} onPress={onPress} activeOpacity={0.9}>
-            <LinearGradient
-                // @ts-ignore
-                colors={gradientColors}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.actionIcon}
-            >
-                <Text style={styles.actionIconText}>{icon}</Text>
-            </LinearGradient>
+            <View style={styles.actionIcon}>
+                {icon}
+            </View>
 
             <Text style={styles.actionLabel}>{label}</Text>
 
@@ -23,13 +18,13 @@ export default function HomeActionCard({ icon, label, gradientColors, onPress }:
     );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
     actionCard: {
         width: '48%',
         alignItems: 'center',
-        backgroundColor: '#111c33',
+        backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: '#243149',
+        borderColor: colors.border,
         borderRadius: 18,
         paddingVertical: 18,
         paddingHorizontal: 16,
@@ -51,7 +46,7 @@ const styles = StyleSheet.create({
     },
     actionLabel: {
         fontSize: 14,
-        color: '#e2e8f0',
+        color: colors.text,
         fontWeight: '700',
         textAlign: 'center',
         marginBottom: 12,
@@ -60,7 +55,7 @@ const styles = StyleSheet.create({
         width: '55%',
         height: 3,
         borderRadius: 999,
-        backgroundColor: 'rgba(148, 163, 184, 0.22)',
+        backgroundColor: colors.surfaceHighlight,
         marginTop: 'auto',
     },
 });

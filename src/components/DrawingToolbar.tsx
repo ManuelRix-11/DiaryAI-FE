@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { useThemeStyles, ThemeColors } from '../theme/ThemeContext';
 import { DrawingToolbarProps, ToolConfig } from '@/src/types/WritingProps';
 
 export default function DrawingToolbar({
@@ -16,7 +17,8 @@ export default function DrawingToolbar({
                                            onUndo,
                                            onClear,
                                        }: DrawingToolbarProps) {
-    const colors: string[] = [
+    const styles = useThemeStyles(createStyles);
+    const colorsList: string[] = [
         '#000000',
         '#E63C5B',
         '#5B3CE6',
@@ -40,7 +42,7 @@ export default function DrawingToolbar({
     return (
         <View style={styles.toolbar}>
             <LinearGradient
-                colors={['rgba(17, 28, 51, 0.98)', 'rgba(15, 23, 42, 0.98)']}
+                colors={[styles.toolbar.backgroundColor as string || '#111c33', styles.toolbarGradient.backgroundColor as string || '#0f172a']}
                 style={styles.toolbarGradient}
             >
                 <View style={styles.toolbarHeader}>
@@ -70,7 +72,7 @@ export default function DrawingToolbar({
                                 <Ionicons
                                     name={tool.icon as any}
                                     size={24}
-                                    color={selectedTool === tool.id ? '#c4b5fd' : '#94a3b8'}
+                                    color={selectedTool === tool.id ? styles.toolLabelActive.color as string : styles.toolLabel.color as string}
                                 />
                                 <Text
                                     style={[
@@ -89,7 +91,7 @@ export default function DrawingToolbar({
                     <View style={styles.colorsSection}>
                         <Text style={styles.sectionLabel}>Color</Text>
                         <View style={styles.colorsRow}>
-                            {colors.map((color) => (
+                            {colorsList.map((color) => (
                                 <TouchableOpacity
                                     key={color}
                                     style={[
@@ -136,7 +138,7 @@ export default function DrawingToolbar({
                                             width: width * 2,
                                             height: width * 2,
                                             backgroundColor:
-                                                selectedStrokeWidth === width ? '#c4b5fd' : '#94a3b8',
+                                                selectedStrokeWidth === width ? styles.toolLabelActive.color as string : styles.toolLabel.color as string,
                                         },
                                     ]}
                                 />
@@ -147,7 +149,7 @@ export default function DrawingToolbar({
 
                 <View style={styles.actionsSection}>
                     <TouchableOpacity style={styles.actionButton} onPress={onUndo} activeOpacity={0.9}>
-                        <Ionicons name="arrow-undo" size={20} color="#94a3b8" />
+                        <Ionicons name="arrow-undo" size={20} color={styles.actionText.color as string} />
                         <Text style={styles.actionText}>Undo</Text>
                     </TouchableOpacity>
 
@@ -161,7 +163,7 @@ export default function DrawingToolbar({
     );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
     toolbar: {
         position: 'absolute',
         bottom: 100,
@@ -170,10 +172,12 @@ const styles = StyleSheet.create({
         borderRadius: 22,
         overflow: 'hidden',
         borderWidth: 1,
-        borderColor: '#243149',
+        borderColor: colors.border,
+        backgroundColor: colors.surfaceAlt,
     },
     toolbarGradient: {
         padding: 18,
+        backgroundColor: colors.surface,
     },
     toolbarHeader: {
         flexDirection: 'row',
@@ -184,12 +188,12 @@ const styles = StyleSheet.create({
     toolbarTitle: {
         fontSize: 18,
         fontWeight: '800',
-        color: '#e2e8f0',
+        color: colors.text,
         marginBottom: 2,
     },
     toolbarSubtitle: {
         fontSize: 12,
-        color: '#94a3b8',
+        color: colors.textSecondary,
     },
     closeButton: {
         padding: 4,
@@ -200,7 +204,7 @@ const styles = StyleSheet.create({
     sectionLabel: {
         fontSize: 12,
         fontWeight: '700',
-        color: '#94a3b8',
+        color: colors.textSecondary,
         textTransform: 'uppercase',
         letterSpacing: 0.6,
         marginBottom: 12,
@@ -211,25 +215,25 @@ const styles = StyleSheet.create({
     },
     toolButton: {
         flex: 1,
-        backgroundColor: '#0f172a',
+        backgroundColor: colors.background,
         borderWidth: 1,
-        borderColor: '#243149',
+        borderColor: colors.border,
         borderRadius: 14,
         paddingVertical: 12,
         alignItems: 'center',
         gap: 8,
     },
     toolButtonActive: {
-        backgroundColor: 'rgba(196, 181, 253, 0.08)',
-        borderColor: '#5B3CE6',
+        backgroundColor: colors.primaryBg,
+        borderColor: colors.primary,
     },
     toolLabel: {
         fontSize: 12,
-        color: '#94a3b8',
+        color: colors.textSecondary,
         fontWeight: '700',
     },
     toolLabelActive: {
-        color: '#c4b5fd',
+        color: colors.primary,
     },
     colorsSection: {
         marginBottom: 18,
@@ -248,11 +252,11 @@ const styles = StyleSheet.create({
     },
     colorButtonWhite: {
         borderWidth: 1,
-        borderColor: '#334155',
+        borderColor: colors.border,
     },
     colorButtonActive: {
         borderWidth: 3,
-        borderColor: '#5B3CE6',
+        borderColor: colors.primary,
     },
     strokeSection: {
         marginBottom: 18,
@@ -263,17 +267,17 @@ const styles = StyleSheet.create({
     },
     strokeButton: {
         flex: 1,
-        backgroundColor: '#0f172a',
+        backgroundColor: colors.background,
         borderWidth: 1,
-        borderColor: '#243149',
+        borderColor: colors.border,
         borderRadius: 14,
         paddingVertical: 16,
         alignItems: 'center',
         justifyContent: 'center',
     },
     strokeButtonActive: {
-        backgroundColor: 'rgba(196, 181, 253, 0.08)',
-        borderColor: '#5B3CE6',
+        backgroundColor: colors.primaryBg,
+        borderColor: colors.primary,
     },
     strokePreview: {
         borderRadius: 999,
@@ -284,9 +288,9 @@ const styles = StyleSheet.create({
     },
     actionButton: {
         flex: 1,
-        backgroundColor: '#0f172a',
+        backgroundColor: colors.background,
         borderWidth: 1,
-        borderColor: '#243149',
+        borderColor: colors.border,
         borderRadius: 14,
         paddingVertical: 12,
         flexDirection: 'row',
@@ -297,6 +301,6 @@ const styles = StyleSheet.create({
     actionText: {
         fontSize: 14,
         fontWeight: '700',
-        color: '#94a3b8',
+        color: colors.textSecondary,
     },
 });

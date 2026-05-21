@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ActivityIndicator, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
+import { useThemeStyles, ThemeColors } from '../theme/ThemeContext';
 import { diariesApi } from '@/src/api/diaries';
 import { AuthUser } from '@/model/user';
 
@@ -15,6 +16,7 @@ export default function NewDiaryModal({ user }: NewDiaryModalProps) {
     const [title, setTitle] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const navigation = useNavigation();
+    const styles = useThemeStyles(createStyles);
 
     const handleCreate = () => {
         const finalTitle = title.trim() || new Date().toLocaleDateString();
@@ -64,7 +66,7 @@ export default function NewDiaryModal({ user }: NewDiaryModalProps) {
     );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors, isDark: boolean) => StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
@@ -72,15 +74,15 @@ const styles = StyleSheet.create({
     },
     backdrop: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(15, 23, 42, 0.75)',
+        backgroundColor: isDark ? 'rgba(15, 23, 42, 0.75)' : 'rgba(0, 0, 0, 0.4)',
     },
     modalContent: {
         width: '85%',
-        backgroundColor: '#111c33',
+        backgroundColor: colors.surface,
         borderRadius: 24,
         padding: 24,
         borderWidth: 1,
-        borderColor: '#243149',
+        borderColor: colors.border,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.3,
@@ -90,22 +92,22 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 22,
         fontWeight: '800',
-        color: '#e2e8f0',
+        color: colors.text,
         marginBottom: 16,
     },
     input: {
-        backgroundColor: '#0f172a',
+        backgroundColor: colors.background,
         borderWidth: 1,
-        borderColor: '#243149',
+        borderColor: colors.border,
         borderRadius: 12,
         padding: 14,
-        color: '#f8fafc',
+        color: colors.text,
         fontSize: 16,
         marginBottom: 8,
     },
     note: {
         fontSize: 12,
-        color: '#94a3b8aa',
+        color: colors.textSecondary,
         marginBottom: 24,
         marginLeft: 4,
         fontStyle: 'italic'
@@ -122,7 +124,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     cancelText: {
-        color: '#94a3b8',
+        color: colors.textSecondary,
         fontSize: 15,
         fontWeight: '600',
     },

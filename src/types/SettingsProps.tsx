@@ -1,5 +1,7 @@
+import React from 'react';
+
 export interface SettingItemProps {
-    icon: string;
+    icon: React.ReactNode;
     title: string;
     description?: string;
     type?: 'navigation' | 'toggle' | 'value' | 'input';

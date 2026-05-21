@@ -13,10 +13,12 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { Ionicons } from '@expo/vector-icons';
+import { Gem, Bell, LineChart, Fingerprint, UserCheck } from 'lucide-react-native';
 
 import Navbar from '../components/_navbar';
 import ProfileHeader from '../components/ProfileHeader';
 import SettingItem from '../components/SettingsItem';
+import { usersApi } from '../api/users';
 import { AuthUser } from '@/model/user';
 import { useTheme, useThemeStyles, ThemeMode, ThemeColors } from '../theme/ThemeContext';
 
@@ -87,9 +89,20 @@ export default function SettingsScreen({ onLogout, user }: SettingsScreenProps) 
     };
 
     const handleDeleteAccount = () => {
-        Alert.alert('Delete Account', 'This action cannot be undone. Are you sure?', [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Delete', style: 'destructive', onPress: () => console.log('Delete') },
+        Alert.alert('Elimina Account', 'Questa azione è irreversibile. Sei sicuro di voler procedere?', [
+            { text: 'Annulla', style: 'cancel' },
+            { 
+                text: 'Elimina', 
+                style: 'destructive', 
+                onPress: async () => {
+                    try {
+                        await usersApi.remove(user.id);
+                        onLogout?.();
+                    } catch (error) {
+                        Alert.alert('Errore', 'Impossibile eliminare l\'account. Riprova più tardi.');
+                    }
+                } 
+            },
         ]);
     };
 
@@ -122,11 +135,22 @@ export default function SettingsScreen({ onLogout, user }: SettingsScreenProps) 
 
                 <View style={styles.section}>
                     <SettingItem
-                        icon="💎"
+                        icon={<Gem color="#5B3CE6" size={24} />}
                         title="Subscription"
                         description="Manage your subscription"
                         type="navigation"
                         onPress={handleAccountSetting}
+                    />
+                </View>
+
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Il tuo Psicologo</Text>
+                    <SettingItem
+                        icon={<UserCheck color="#0EA5E9" size={24} />}
+                        title="Gestione Psicologo"
+                        description="Monitoraggio con il tuo specialista"
+                        type="navigation"
+                        onPress={() => navigation.navigate('Psychologist' as never)}
                     />
                 </View>
 
@@ -164,7 +188,7 @@ export default function SettingsScreen({ onLogout, user }: SettingsScreenProps) 
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>App preferences</Text>
                     <SettingItem
-                        icon="🔔"
+                        icon={<Bell color="#E63C5B" size={24} />}
                         title="Notifications"
                         description="Push notifications and alerts"
                         type="toggle"
@@ -172,7 +196,7 @@ export default function SettingsScreen({ onLogout, user }: SettingsScreenProps) 
                         onToggle={setNotifications}
                     />
                     <SettingItem
-                        icon="📈"
+                        icon={<LineChart color="#F56C5B" size={24} />}
                         title="Analytics"
                         description="Help improve the app"
                         type="toggle"
@@ -180,7 +204,7 @@ export default function SettingsScreen({ onLogout, user }: SettingsScreenProps) 
                         onToggle={setAnalytics}
                     />
                     <SettingItem
-                        icon="🧬"
+                        icon={<Fingerprint color="#5B3CE6" size={24} />}
                         title="Biometric Login"
                         description="Face ID / Touch ID"
                         type="toggle"
@@ -196,7 +220,7 @@ export default function SettingsScreen({ onLogout, user }: SettingsScreenProps) 
                         <Text style={styles.logoutText}>Logout</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteAccount} activeOpacity={0.9} disabled>
+                    <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteAccount} activeOpacity={0.9}>
                         <LinearGradient
                             colors={['#E63C5B', '#F56C5B']}
                             start={{ x: 0, y: 0 }}

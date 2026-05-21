@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
+import { useThemeStyles, ThemeColors } from '../theme/ThemeContext';
 import { LinearGradient } from 'expo-linear-gradient';
 
 interface RankCardProps {
@@ -7,6 +8,7 @@ interface RankCardProps {
 }
 
 export default function RankCard({ streak }: RankCardProps) {
+    const styles = useThemeStyles(createStyles);
     const getUserTitle = (s: number) => {
         if (s === 0) return { title: "Apprendista 🌱", color: "#94a3b8", desc: "Hai appena iniziato" };
         if (s < 4) return { title: "Novizio della Penna ✍️", color: "#c4b5fd", desc: "I primi passi nell'introspezione" };
@@ -21,7 +23,7 @@ export default function RankCard({ streak }: RankCardProps) {
     return (
         <View style={styles.container}>
             <LinearGradient
-                colors={['rgba(255,255,255,0.06)', 'rgba(255,255,255,0.02)']}
+                colors={[styles.card.backgroundColor as string, 'transparent']}
                 style={styles.card}
             >
                 <Text style={styles.label}>Titolo Raggiunto</Text>
@@ -34,7 +36,7 @@ export default function RankCard({ streak }: RankCardProps) {
     );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
     container: {
         marginBottom: 24,
     },
@@ -42,11 +44,12 @@ const styles = StyleSheet.create({
         borderRadius: 24,
         padding: 24,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.08)',
+        borderColor: colors.border,
         alignItems: 'center',
+        backgroundColor: colors.surfaceAlt,
     },
     label: {
-        color: '#94a3b8',
+        color: colors.textSecondary,
         fontSize: 12,
         fontWeight: '700',
         textTransform: 'uppercase',
@@ -64,7 +67,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     desc: {
-        color: '#94a3b8',
+        color: colors.textSecondary,
         fontSize: 14,
         textAlign: 'center',
         lineHeight: 20,

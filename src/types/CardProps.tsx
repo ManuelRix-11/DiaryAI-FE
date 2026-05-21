@@ -1,3 +1,5 @@
+import React from 'react';
+
 export interface CardProps {
     title: string;
     description: string;
@@ -14,6 +16,7 @@ export interface StatsCardProps {
     value: string;
     label: string;
     highlight?: boolean;
-    icon?: string;
+    icon?: React.ReactNode;
     glowIntensity?: number;
+    rawValue?: number;
 }

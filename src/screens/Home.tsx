@@ -11,6 +11,8 @@ import FeaturesCard from '@/src/components/_featuresCard';
 import HomeActionCard from '@/src/components/HomeActionCard';
 import { AuthUser } from '@/model/user';
 import { usersApi } from '@/src/api/users';
+import { NotificationsService } from '@/src/services/NotificationsService';
+import { Flame, Plus, BarChart2, Settings, User, Calendar } from 'lucide-react-native';
 
 type HomeScreenProps = {
     user: AuthUser;
@@ -40,7 +42,15 @@ export default function HomeScreen({ user }: HomeScreenProps) {
                 }
             };
 
+            const setupNotifications = async () => {
+                const granted = await NotificationsService.requestPermissions();
+                if (granted) {
+                    await NotificationsService.scheduleStreakReminders();
+                }
+            };
+
             fetchUserStats();
+            setupNotifications();
 
             return () => {
                 isActive = false;
@@ -50,34 +60,35 @@ export default function HomeScreen({ user }: HomeScreenProps) {
 
     const stats = [
         { value: fetchedStats[0].toString(), label: 'Diaries', highlight: false },
-        { value: fetchedStats[1].toString(), label: 'Streak', highlight: fetchedStats[1] > 0, icon: '🔥', glowIntensity: fetchedStats[1] },
-        { value: `${Math.round(fetchedStats[2] * 100)}%`, label: 'Mood', highlight: false },
+        { value: fetchedStats[1].toString(), label: 'Streak', highlight: fetchedStats[1] > 0, icon: <Flame size={16} color={fetchedStats[1] > 0 ? "#ffffff" : "#A0A0A0"} />, glowIntensity: fetchedStats[1] },
+        { value: `${Math.round(fetchedStats[2] * 100)}%`, label: 'Mood', highlight: false, rawValue: fetchedStats[2] },
     ];
 
     const actions = [
         {
-            icon: '+',
+            icon: <Plus color="#5B3CE6" size={32} />,
             label: 'Nuovo Diario',
-            gradientColors: ['#5B3CE6', '#F56C5B'],
             event: () => navigation.navigate('NewDiaryModal' as never),
         },
         {
-            icon: '📊',
+            icon: <BarChart2 color="#F56C5B" size={32} />,
             label: 'Analytics',
-            gradientColors: ['#E63C5B', '#F56C5B'],
             event: () => navigation.navigate('Insights' as never),
         },
         {
-            icon: '⚙️',
+            icon: <Settings color="#5B3CE6" size={32} />,
             label: 'Settings',
-            gradientColors: ['#5B3CE6', '#E63C5B'],
             event: () => navigation.navigate('Settings' as never),
         },
         {
-            icon: '👤',
+            icon: <User color="#F56C5B" size={32} />,
             label: 'Profile',
-            gradientColors: ['#E63C5B', '#5B3CE6'],
             event: () => navigation.navigate('Profile' as never),
+        },
+        {
+            icon: <Calendar color="#5B3CE6" size={32} />,
+            label: 'History',
+            event: () => navigation.navigate('History' as never),
         },
     ];
 
@@ -106,7 +117,7 @@ export default function HomeScreen({ user }: HomeScreenProps) {
 
                 <View style={styles.statsContainer}>
                     {stats.map((stat, index) => (
-                        <StatsCard key={index} value={stat.value} label={stat.label} highlight={stat.highlight} icon={stat.icon} glowIntensity={('glowIntensity' in stat) ? stat.glowIntensity : undefined} />
+                        <StatsCard key={index} value={stat.value} label={stat.label} highlight={stat.highlight} icon={stat.icon} glowIntensity={('glowIntensity' in stat) ? stat.glowIntensity : undefined} rawValue={('rawValue' in stat) ? stat.rawValue : undefined} />
                     ))}
                 </View>
 
@@ -127,7 +138,9 @@ export default function HomeScreen({ user }: HomeScreenProps) {
                                 end={{ x: 1, y: 1 }}
                                 style={styles.primaryActionCard}
                             >
-                                <Text style={styles.primaryActionIcon}>+</Text>
+                                <View style={{ marginBottom: 12 }}>
+                                    <Plus size={40} color="#ffffff" />
+                                </View>
                                 <Text style={styles.primaryActionTitle}>Nuovo Diario</Text>
                                 <Text style={styles.primaryActionDescription}>
                                     Inizia una nuova entry in pochi secondi
@@ -138,11 +151,10 @@ export default function HomeScreen({ user }: HomeScreenProps) {
 
                     <View style={styles.actionsGrid}>
                         {actions.slice(1).map((action, index) => (
-                            <HomeActionCard
+                            <HomeActionCard 
                                 key={index}
                                 icon={action.icon}
                                 label={action.label}
-                                gradientColors={action.gradientColors}
                                 onPress={action.event}
                             />
                         ))}

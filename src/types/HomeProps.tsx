@@ -1,6 +1,7 @@
+import React from 'react';
+
 export interface HomeActionCardProps {
-    icon: string;
+    icon: React.ReactNode;
     label: string;
-    gradientColors: string[];
     onPress: () => void;
 }

@@ -1,9 +1,12 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { useThemeStyles, ThemeColors } from '../theme/ThemeContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FeaturesCardProps } from '@/src/types/CardProps';
 
 export default function FeaturesCard({ title, description, buttonText, onPress }: FeaturesCardProps) {
+    const styles = useThemeStyles(createStyles);
+
     return (
         <View style={styles.featuredCard}>
             <LinearGradient
@@ -27,30 +30,30 @@ export default function FeaturesCard({ title, description, buttonText, onPress }
     );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
     featuredCard: {
         borderRadius: 22,
         overflow: 'hidden',
     },
     featuredGradient: {
         padding: 22,
-        backgroundColor: '#111c33',
+        backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: '#243149',
+        borderColor: colors.border,
         borderRadius: 22,
     },
     badge: {
         alignSelf: 'flex-start',
-        backgroundColor: 'rgba(255,255,255,0.12)',
+        backgroundColor: colors.surfaceHighlight,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.18)',
+        borderColor: colors.border,
         paddingHorizontal: 10,
         paddingVertical: 5,
         borderRadius: 999,
         marginBottom: 14,
     },
     badgeText: {
-        color: '#ffffff',
+        color: colors.text,
         fontSize: 11,
         fontWeight: '700',
         textTransform: 'uppercase',
@@ -59,26 +62,26 @@ const styles = StyleSheet.create({
     featuredTitle: {
         fontSize: 22,
         fontWeight: '800',
-        color: '#ffffff',
+        color: colors.text,
         marginBottom: 8,
     },
     featuredDescription: {
         fontSize: 15,
-        color: 'rgba(255, 255, 255, 0.82)',
+        color: colors.textSecondary,
         marginBottom: 18,
         lineHeight: 22,
     },
     featuredButton: {
-        backgroundColor: 'rgba(255, 255, 255, 0.14)',
+        backgroundColor: colors.surfaceHighlight,
         paddingVertical: 12,
         paddingHorizontal: 18,
         borderRadius: 14,
         alignSelf: 'flex-start',
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.12)',
+        borderColor: colors.border,
     },
     featuredButtonText: {
-        color: '#ffffff',
+        color: colors.text,
         fontSize: 14,
         fontWeight: '700',
     },
